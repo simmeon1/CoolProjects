@@ -17,9 +17,7 @@ namespace Selenium_Skyscanner
     {
         static void Main(string[] args)
         {
-            Airport origin = Airports_FlightsFromDotCom.GetSofiaAirport();
-            Airport destination = Airports_FlightsFromDotCom.GetAberdeenAirport();
-            string paths = PrintPossiblePathsFromOriginToDestination(origin, destination);
+            string paths = PrintPossiblePathsFromOriginToDestination(Airports_FlightsFromDotCom.GetSofiaAirport(), Airports_FlightsFromDotCom.GetEdinburghAirport());
             Console.WriteLine(paths);
         }
 
