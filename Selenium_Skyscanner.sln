@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Selenium_Skyscanner", "Selenium_Skyscanner\Selenium_Skyscanner.csproj", "{184BD415-4313-4EDC-B8CC-AAB143EF253D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{184BD415-4313-4EDC-B8CC-AAB143EF253D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{184BD415-4313-4EDC-B8CC-AAB143EF253D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{184BD415-4313-4EDC-B8CC-AAB143EF253D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{184BD415-4313-4EDC-B8CC-AAB143EF253D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {37DD56E3-2225-44E3-8276-D69D2E1AD72E}
+	EndGlobalSection
+EndGlobal
