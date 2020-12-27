@@ -1,32 +1,30 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 
 namespace Selenium_Skyscanner
 {
     [DebuggerDisplay("{ToString()}")]
-    class Airport
+    public class Airport : IEquatable<Airport>
     {
         public Airport(string iATA, string location)
         {
             IATA = iATA;
             Location = location;
-            DestinationAirports = new List<Airport>();
+            DestinationAirports = new AirportCollection();
         }
 
         public string IATA { get; set; }
         public string Location { get; set; }
-        public List<Airport> DestinationAirports { get; set; }
+        public AirportCollection DestinationAirports { get; set; }
         public void AddDestinationAirport(Airport destAirport)
         {
             destAirport.DestinationAirports.Add(this);
             DestinationAirports.Add(destAirport);
-        }
-
-        public override int GetHashCode()
-        {
-            return IATA.GetHashCode();
         }
 
         public override string ToString()
@@ -34,9 +32,9 @@ namespace Selenium_Skyscanner
             return $"{IATA} : {Location}";
         }
 
-        public List<Airport> GetCommonMidwayAirportsWithTargetAirport(Airport targetAirport)
+        public AirportCollection GetCommonMidwayAirportsWithTargetAirport(Airport targetAirport)
         {
-            List<Airport> commonAirports = new List<Airport>();
+            AirportCollection commonAirports = new AirportCollection();
             foreach (Airport originDestinationAirport in this.DestinationAirports)
             {
                 foreach (Airport targetDestinationAirport in targetAirport.DestinationAirports)
@@ -49,6 +47,12 @@ namespace Selenium_Skyscanner
                 }
             }
             return commonAirports;
+        }
+
+        public bool Equals([AllowNull] Airport other)
+        {
+            if (other == null) return false;
+            return (this.IATA.Equals(other.IATA));
         }
     }
 }
