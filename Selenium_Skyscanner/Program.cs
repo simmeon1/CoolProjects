@@ -17,26 +17,12 @@ namespace Selenium_Skyscanner
     {
         static void Main(string[] args)
         {
-            string paths = PrintPossiblePathsFromOriginToDestination(Airports_FlightsFromDotCom.GetSofiaAirport(), Airports_FlightsFromDotCom.GetEdinburghAirport());
-            Console.WriteLine(paths);
-        }
-
-        private static string PrintPossiblePathsFromOriginToDestination(Airport origin, Airport destination)
-        {
+            Airport origin = Airports_FlightsFromDotCom.GetVarnaAirport();
+            Airport destination = Airports_FlightsFromDotCom.GetEdinburghAirport();
             AirportCollection midwayAirports = origin.GetCommonMidwayAirportsWithTargetAirport(destination);
-            List<AirportCollection> pathsCollection = midwayAirports.GroupMidwayAirportsWithOriginAndDestination(origin, destination);
-            return GetCollectionsAsPaths(pathsCollection);
-        }
-
-        public static string GetCollectionsAsPaths(List<AirportCollection> collections)
-        {
-            StringBuilder sb = new StringBuilder("");
-            foreach (AirportCollection collection in collections)
-            {
-                if (sb.Length > 0) sb.Append($"{Environment.NewLine}");
-                sb.Append(collection.PrintCollectionAsPath());
-            }
-            return sb.ToString();
+            AirportToAirportPaths paths = midwayAirports.AddOriginAndDestinationToEachAirport(origin, destination);
+            string jsFunc = paths.CreateSkyscannerJSFunctionToLookPaths();
+            Console.WriteLine(paths.CreateSkyscannerJSFunctionToLookPaths());
         }
     }
 }

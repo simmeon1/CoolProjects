@@ -4,42 +4,91 @@ using System.Text;
 
 namespace Selenium_Skyscanner
 {
-    static class Airports_FlightsFromDotCom
+    public static class Airports_FlightsFromDotCom
     {
         public static Airport GetAberdeenAirport()
         {
-            Airport aberdeenAirport = new Airport("ABZ", "Dyce");
-            aberdeenAirport.AddDestinationAirport(new Airport("ALC", "Alicante"));
-            aberdeenAirport.AddDestinationAirport(new Airport("AMS", "Amsterdam"));
-            aberdeenAirport.AddDestinationAirport(new Airport("BHD", "Belfast"));
-            aberdeenAirport.AddDestinationAirport(new Airport("BGO", "Bergen"));
-            aberdeenAirport.AddDestinationAirport(new Airport("BHX", "Birmingham"));
-            aberdeenAirport.AddDestinationAirport(new Airport("BOJ", "Bourgas"));
-            aberdeenAirport.AddDestinationAirport(new Airport("BRS", "Bristol"));
-            aberdeenAirport.AddDestinationAirport(new Airport("CPH", "Copenhagen"));
-            aberdeenAirport.AddDestinationAirport(new Airport("MME", "Darlington"));
-            aberdeenAirport.AddDestinationAirport(new Airport("DUB", "Dublin"));
-            aberdeenAirport.AddDestinationAirport(new Airport("EBJ", "Esbjerg"));
-            aberdeenAirport.AddDestinationAirport(new Airport("FAO", "Faro"));
-            aberdeenAirport.AddDestinationAirport(new Airport("GDN", "Gdansk"));
-            aberdeenAirport.AddDestinationAirport(new Airport("GVA", "Geneva"));
-            aberdeenAirport.AddDestinationAirport(new Airport("HUY", "Humberside"));
-            aberdeenAirport.AddDestinationAirport(new Airport("INV", "Inverness"));
-            aberdeenAirport.AddDestinationAirport(new Airport("KOI", "Kirkwall"));
-            aberdeenAirport.AddDestinationAirport(new Airport("LHR", "London"));
-            aberdeenAirport.AddDestinationAirport(new Airport("LTN", "London"));
-            aberdeenAirport.AddDestinationAirport(new Airport("AGP", "Malaga"));
-            aberdeenAirport.AddDestinationAirport(new Airport("MAN", "Manchester"));
-            aberdeenAirport.AddDestinationAirport(new Airport("NCL", "Newcastle"));
-            aberdeenAirport.AddDestinationAirport(new Airport("NWI", "Norwich"));
-            aberdeenAirport.AddDestinationAirport(new Airport("OSL", "Oslo"));
-            aberdeenAirport.AddDestinationAirport(new Airport("CDG", "Paris"));
-            aberdeenAirport.AddDestinationAirport(new Airport("RIX", "Riga"));
-            aberdeenAirport.AddDestinationAirport(new Airport("SVG", "Stavanger"));
-            aberdeenAirport.AddDestinationAirport(new Airport("LSI", "Sumburgh"));
-            return aberdeenAirport;
+            Airport airport = new Airport("ABZ", "Dyce");
+            airport.AddDestinationAirport(new Airport("ALC", "Alicante"));
+            airport.AddDestinationAirport(new Airport("AMS", "Amsterdam"));
+            airport.AddDestinationAirport(new Airport("BHD", "Belfast"));
+            airport.AddDestinationAirport(new Airport("BGO", "Bergen"));
+            airport.AddDestinationAirport(new Airport("BHX", "Birmingham"));
+            airport.AddDestinationAirport(new Airport("BOJ", "Bourgas"));
+            airport.AddDestinationAirport(new Airport("BRS", "Bristol"));
+            airport.AddDestinationAirport(new Airport("CPH", "Copenhagen"));
+            airport.AddDestinationAirport(new Airport("MME", "Darlington"));
+            airport.AddDestinationAirport(new Airport("DUB", "Dublin"));
+            airport.AddDestinationAirport(new Airport("EBJ", "Esbjerg"));
+            airport.AddDestinationAirport(new Airport("FAO", "Faro"));
+            airport.AddDestinationAirport(new Airport("GDN", "Gdansk"));
+            airport.AddDestinationAirport(new Airport("GVA", "Geneva"));
+            airport.AddDestinationAirport(new Airport("HUY", "Humberside"));
+            airport.AddDestinationAirport(new Airport("INV", "Inverness"));
+            airport.AddDestinationAirport(new Airport("KOI", "Kirkwall"));
+            airport.AddDestinationAirport(new Airport("LHR", "London"));
+            airport.AddDestinationAirport(new Airport("LTN", "London"));
+            airport.AddDestinationAirport(new Airport("AGP", "Malaga"));
+            airport.AddDestinationAirport(new Airport("MAN", "Manchester"));
+            airport.AddDestinationAirport(new Airport("NCL", "Newcastle"));
+            airport.AddDestinationAirport(new Airport("NWI", "Norwich"));
+            airport.AddDestinationAirport(new Airport("OSL", "Oslo"));
+            airport.AddDestinationAirport(new Airport("CDG", "Paris"));
+            airport.AddDestinationAirport(new Airport("RIX", "Riga"));
+            airport.AddDestinationAirport(new Airport("SVG", "Stavanger"));
+            airport.AddDestinationAirport(new Airport("LSI", "Sumburgh"));
+            return airport;
         }
-        
+
+        public static Airport GetVarnaAirport()
+        {
+            Airport airport = new Airport("VAR", "Varna");
+            airport.AddDestinationAirport(new Airport("ATH", "Athens"));
+            airport.AddDestinationAirport(new Airport("BCN", "Barcelona"));
+            airport.AddDestinationAirport(new Airport("BGY", "Bergamo"));
+            airport.AddDestinationAirport(new Airport("BER", "Berlin"));
+            airport.AddDestinationAirport(new Airport("SXF", "Berlin"));
+            airport.AddDestinationAirport(new Airport("BOJ", "Bourgas"));
+            airport.AddDestinationAirport(new Airport("BRE", "Bremen"));
+            airport.AddDestinationAirport(new Airport("CRL", "Brussels"));
+            airport.AddDestinationAirport(new Airport("CGN", "Cologne"));
+            airport.AddDestinationAirport(new Airport("DTM", "Dortmund"));
+            airport.AddDestinationAirport(new Airport("DUS", "Dusseldorf"));
+            airport.AddDestinationAirport(new Airport("EIN", "Eindhoven"));
+            airport.AddDestinationAirport(new Airport("ERF", "Erfurt"));
+            airport.AddDestinationAirport(new Airport("FRA", "Frankfurt"));
+            airport.AddDestinationAirport(new Airport("GRZ", "Graz"));
+            airport.AddDestinationAirport(new Airport("HHN", "Hahn"));
+            airport.AddDestinationAirport(new Airport("HAM", "Hamburg"));
+            airport.AddDestinationAirport(new Airport("HAJ", "Hanover"));
+            airport.AddDestinationAirport(new Airport("HEL", "Helsinki"));
+            airport.AddDestinationAirport(new Airport("IST", "Istanbul"));
+            airport.AddDestinationAirport(new Airport("FKB", "Karlsruhe"));
+            airport.AddDestinationAirport(new Airport("LCA", "Larnaca"));
+            airport.AddDestinationAirport(new Airport("LEJ", "Leipzig"));
+            airport.AddDestinationAirport(new Airport("LPL", "Liverpool"));
+            airport.AddDestinationAirport(new Airport("LCJ", "Lodz"));
+            airport.AddDestinationAirport(new Airport("LGW", "London"));
+            airport.AddDestinationAirport(new Airport("LTN", "London"));
+            airport.AddDestinationAirport(new Airport("LUX", "Luxemburg"));
+            airport.AddDestinationAirport(new Airport("MAN", "Manchester"));
+            airport.AddDestinationAirport(new Airport("FMM", "Memmingen"));
+            airport.AddDestinationAirport(new Airport("DME", "Moscow"));
+            airport.AddDestinationAirport(new Airport("FMO", "Muenster"));
+            airport.AddDestinationAirport(new Airport("MUC", "Munich"));
+            airport.AddDestinationAirport(new Airport("NTE", "Nantes"));
+            airport.AddDestinationAirport(new Airport("NUE", "Nuremberg"));
+            airport.AddDestinationAirport(new Airport("PRG", "Prague"));
+            airport.AddDestinationAirport(new Airport("SZG", "Salzburg"));
+            airport.AddDestinationAirport(new Airport("SOF", "Sofia"));
+            airport.AddDestinationAirport(new Airport("STR", "Stuttgart"));
+            airport.AddDestinationAirport(new Airport("TLV", "Tel Aviv"));
+            airport.AddDestinationAirport(new Airport("VIE", "Vienna"));
+            airport.AddDestinationAirport(new Airport("WAW", "Warsaw"));
+            airport.AddDestinationAirport(new Airport("ZRH", "Zurich"));
+            return airport;
+        }
+
         public static Airport GetEdinburghAirport()
         {
             Airport ediAirport = new Airport("EDI", "Edinburgh");
