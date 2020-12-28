@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Text;
 namespace Selenium_Skyscanner
 {
     [DebuggerDisplay("Count = {Paths.Count}")]
-    public class AirportToAirportPaths
+    public class AirportToAirportPaths : IEnumerable<AirportCollection>
     {
         public List<AirportCollection> Paths { get; set; }
         public AirportToAirportPaths(List<AirportCollection> paths)
@@ -17,6 +18,7 @@ namespace Selenium_Skyscanner
         public string CreateSkyscannerJSFunctionToLookPaths(int maxPathsToInclude = 0)
         {
             string func = "function searchForPaths() {";
+            if (maxPathsToInclude > Paths.Count) maxPathsToInclude = Paths.Count;
             int maxPaths = maxPathsToInclude == 0 ? Paths.Count : maxPathsToInclude;
             int linesAdded = 0;
             for (int i = 0; i < maxPaths; i++)
@@ -41,6 +43,21 @@ namespace Selenium_Skyscanner
                 sb.Append(path.PrintCollectionAsPath());
             }
             return sb.ToString();
+        }
+
+        public IEnumerator<AirportCollection> GetEnumerator()
+        {
+            return ((IEnumerable<AirportCollection>)Paths).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)Paths).GetEnumerator();
+        }
+
+        public void Insert(int index, AirportCollection collection)
+        {
+            Paths.Insert(index, collection);
         }
     }
 }

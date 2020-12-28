@@ -1,15 +1,6 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using System.Collections.ObjectModel;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
-using Newtonsoft.Json;
-using System.Diagnostics;
-using System.Text;
 
 namespace Selenium_Skyscanner
 {
@@ -17,12 +8,19 @@ namespace Selenium_Skyscanner
     {
         static void Main(string[] args)
         {
-            Airport origin = Airports_FlightsFromDotCom.GetVarnaAirport();
+            Airport origin = Airports_FlightsFromDotCom.GetSofiaAirport();
             Airport destination = Airports_FlightsFromDotCom.GetEdinburghAirport();
+            AirportToAirportPaths paths = GetPathsFromOriginToDestination(origin, destination);
+            string jsFunc = paths.CreateSkyscannerJSFunctionToLookPaths();
+            Console.WriteLine(paths.GetCollectionsAsPaths());
+        }
+
+        private static AirportToAirportPaths GetPathsFromOriginToDestination(Airport origin, Airport destination)
+        {
             AirportCollection midwayAirports = origin.GetCommonMidwayAirportsWithTargetAirport(destination);
             AirportToAirportPaths paths = midwayAirports.AddOriginAndDestinationToEachAirport(origin, destination);
-            string jsFunc = paths.CreateSkyscannerJSFunctionToLookPaths();
-            Console.WriteLine(paths.CreateSkyscannerJSFunctionToLookPaths());
+            if (origin.DestinationAirports.Any(a => a.IATA.Equals(destination.IATA))) paths.Insert(0, new AirportCollection(new List<Airport>() { origin, destination }));
+            return paths;
         }
     }
 }
