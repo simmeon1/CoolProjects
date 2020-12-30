@@ -7,17 +7,24 @@ using System.Text;
 namespace Selenium_Skyscanner
 {
     [DebuggerDisplay("Count = {Airports.Count}")]
-    public class AirportCollection : IEnumerable<Airport>
+    public class AirportCollection : ICollection<Airport>
     {
-        public IList<Airport> Airports { get; set; }
+        public List<Airport> Airports { get; set; }
 
         public int Count => Airports.Count;
 
+        public bool IsReadOnly => ((ICollection<Airport>)Airports).IsReadOnly;
+
         public Airport this[int index] { get => Airports[index]; set => Airports[index] = value; }
 
-        public AirportCollection(List<Airport> airports = null)
+        public AirportCollection()
         {
-            Airports = airports ?? new List<Airport>();
+            Airports = new List<Airport>();
+        }
+
+        public AirportCollection(List<Airport> airports)
+        {
+            Airports = airports;
         }
 
         public void Add(Airport item)
@@ -58,6 +65,26 @@ namespace Selenium_Skyscanner
                 paths.Add(group);
             }
             return new AirportToAirportPaths(paths);
+        }
+
+        public void Clear()
+        {
+            ((ICollection<Airport>)Airports).Clear();
+        }
+
+        public bool Contains(Airport item)
+        {
+            return ((ICollection<Airport>)Airports).Contains(item);
+        }
+
+        public void CopyTo(Airport[] array, int arrayIndex)
+        {
+            ((ICollection<Airport>)Airports).CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(Airport item)
+        {
+            return ((ICollection<Airport>)Airports).Remove(item);
         }
     }
 }

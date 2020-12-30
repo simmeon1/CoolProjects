@@ -18,5 +18,10 @@ namespace Selenium_Skyscanner
                 return $"Object could not be serialized due to the following reason: {ex.Message}";
             }
         }
+
+        public static bool IsNullOrEmpty(this string str)
+        {
+            return string.IsNullOrEmpty(str);
+        }
     }
 }

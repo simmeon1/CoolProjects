@@ -7,6 +7,8 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Selenium_Skyscanner
 {
@@ -14,8 +16,15 @@ namespace Selenium_Skyscanner
     {
         static void Main(string[] args)
         {
+            //Dictionary<string, string> airports = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("airports.json"));
+            //AirportCollection collection = worker.GetAirportCollectionFromDictionary(airports);
+
+            AirportCollection collection = JsonConvert.DeserializeObject<AirportCollection>(File.ReadAllText("airportsWithDestinations-upToVIG.json"));
             ChromeWorker_FlightsFromDotCom worker = new ChromeWorker_FlightsFromDotCom();
-            worker.GetAllAirportsFromFlightsFromDotCom();
+            worker.AddDestinationsForAirportsFromFlightsFromDotCom(collection, startFrom: "VIG");
+
+
+            //worker.GetAllAirportsFromFlightsFromDotCom();
 
             //Airport origin = Airports_FlightsFromDotCom.GetSofiaAirport();
             //Airport destination = Airports_FlightsFromDotCom.GetEdinburghAirport();
