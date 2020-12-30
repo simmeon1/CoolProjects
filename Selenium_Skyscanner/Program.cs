@@ -12,10 +12,12 @@ using System.IO;
 
 namespace Selenium_Skyscanner
 {
-    class Program : AirportToAirportPathsFinder
+    class Program
     {
         static void Main(string[] args)
         {
+            //worker.GetAllAirportsFromFlightsFromDotCom();
+
             //Dictionary<string, string> airports = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("airports.json"));
             //AirportCollection collection = worker.GetAirportCollectionFromDictionary(airports);
 
@@ -25,17 +27,9 @@ namespace Selenium_Skyscanner
 
             AirportCollection fullCollection = JsonConvert.DeserializeObject<AirportCollection>(File.ReadAllText("airportsWithDestinations.json"));
             fullCollection.UpdateDestinationsWithCircularReferences();
-            AirportToAirportPaths paths = fullCollection.FindPathsBetweenTwoAirports("BOJ", "ABZ", maxAmountOfTransfers: 1, stopAtFirstResults: false);
+            AirportToAirportPathsFinder pathsFinder = new AirportToAirportPathsFinder(fullCollection);
+            AirportToAirportPaths paths = pathsFinder.FindPathsBetweenTwoAirports("BOJ", "ABZ", stopAtFirstResults: false, maxAmountOfTransfers: 1);
             string pathsStr = paths.GetCollectionsAsPaths(excelFriendly: true);
-            var x = 1;
-
-            //worker.GetAllAirportsFromFlightsFromDotCom();
-
-            //Airport origin = Airports_FlightsFromDotCom.GetSofiaAirport();
-            //Airport destination = Airports_FlightsFromDotCom.GetEdinburghAirport();
-            //AirportToAirportPaths paths = AirportToAirportPathsFinder.GetPathsFromOriginToDestination(origin, destination);
-            //string jsFunc = paths.CreateSkyscannerJSFunctionToLookPaths();
-            //Console.WriteLine(paths.GetCollectionsAsPaths());
         }
     }
 }

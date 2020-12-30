@@ -7,13 +7,15 @@ using System.Text;
 namespace Selenium_Skyscanner
 {
     [DebuggerDisplay("Count = {Paths.Count}")]
-    public class AirportToAirportPaths : ICollection<AirportCollection>
+    public class AirportToAirportPaths : IList<AirportCollection>
     {
         public List<AirportCollection> Paths { get; set; }
 
         public int Count => ((ICollection<AirportCollection>)Paths).Count;
 
         public bool IsReadOnly => ((ICollection<AirportCollection>)Paths).IsReadOnly;
+
+        public AirportCollection this[int index] { get => ((IList<AirportCollection>)Paths)[index]; set => ((IList<AirportCollection>)Paths)[index] = value; }
 
         public AirportToAirportPaths(List<AirportCollection> paths)
         {
@@ -88,6 +90,16 @@ namespace Selenium_Skyscanner
         public bool Remove(AirportCollection item)
         {
             return ((ICollection<AirportCollection>)Paths).Remove(item);
+        }
+
+        public int IndexOf(AirportCollection item)
+        {
+            return ((IList<AirportCollection>)Paths).IndexOf(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            ((IList<AirportCollection>)Paths).RemoveAt(index);
         }
     }
 }
