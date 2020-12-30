@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
+using System.Threading;
+using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Selenium_Skyscanner
 {
-    class Program
+    class Program : AirportToAirportPathsFinder
     {
         static void Main(string[] args)
         {
-            Airport origin = Airports_FlightsFromDotCom.GetSofiaAirport();
-            Airport destination = Airports_FlightsFromDotCom.GetEdinburghAirport();
-            AirportToAirportPaths paths = GetPathsFromOriginToDestination(origin, destination);
-            string jsFunc = paths.CreateSkyscannerJSFunctionToLookPaths();
-            Console.WriteLine(paths.GetCollectionsAsPaths());
-        }
+            ChromeWorker_FlightsFromDotCom worker = new ChromeWorker_FlightsFromDotCom();
+            worker.GetAllAirportsFromFlightsFromDotCom();
 
-        private static AirportToAirportPaths GetPathsFromOriginToDestination(Airport origin, Airport destination)
-        {
-            AirportCollection midwayAirports = origin.GetCommonMidwayAirportsWithTargetAirport(destination);
-            AirportToAirportPaths paths = midwayAirports.AddOriginAndDestinationToEachAirport(origin, destination);
-            if (origin.DestinationAirports.Any(a => a.IATA.Equals(destination.IATA))) paths.Insert(0, new AirportCollection(new List<Airport>() { origin, destination }));
-            return paths;
+            //Airport origin = Airports_FlightsFromDotCom.GetSofiaAirport();
+            //Airport destination = Airports_FlightsFromDotCom.GetEdinburghAirport();
+            //AirportToAirportPaths paths = AirportToAirportPathsFinder.GetPathsFromOriginToDestination(origin, destination);
+            //string jsFunc = paths.CreateSkyscannerJSFunctionToLookPaths();
+            //Console.WriteLine(paths.GetCollectionsAsPaths());
         }
     }
 }
