@@ -19,10 +19,15 @@ namespace Selenium_Skyscanner
             //Dictionary<string, string> airports = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("airports.json"));
             //AirportCollection collection = worker.GetAirportCollectionFromDictionary(airports);
 
-            AirportCollection collection = JsonConvert.DeserializeObject<AirportCollection>(File.ReadAllText("airportsWithDestinations-upToVIG.json"));
-            ChromeWorker_FlightsFromDotCom worker = new ChromeWorker_FlightsFromDotCom();
-            worker.AddDestinationsForAirportsFromFlightsFromDotCom(collection, startFrom: "VIG");
+            //AirportCollection collection = JsonConvert.DeserializeObject<AirportCollection>(File.ReadAllText("airportsWithDestinations-upToVIG.json"));
+            //ChromeWorker_FlightsFromDotCom worker = new ChromeWorker_FlightsFromDotCom();
+            //worker.AddDestinationsForAirportsFromFlightsFromDotCom(collection, startFrom: "VIG");
 
+            AirportCollection fullCollection = JsonConvert.DeserializeObject<AirportCollection>(File.ReadAllText("airportsWithDestinations.json"));
+            fullCollection.UpdateDestinationsWithCircularReferences();
+            AirportToAirportPaths paths = fullCollection.FindPathsBetweenTwoAirports("BOJ", "ABZ", maxAmountOfTransfers: 1, stopAtFirstResults: false);
+            string pathsStr = paths.GetCollectionsAsPaths(excelFriendly: true);
+            var x = 1;
 
             //worker.GetAllAirportsFromFlightsFromDotCom();
 

@@ -7,9 +7,14 @@ using System.Text;
 namespace Selenium_Skyscanner
 {
     [DebuggerDisplay("Count = {Paths.Count}")]
-    public class AirportToAirportPaths : IEnumerable<AirportCollection>
+    public class AirportToAirportPaths : ICollection<AirportCollection>
     {
         public List<AirportCollection> Paths { get; set; }
+
+        public int Count => ((ICollection<AirportCollection>)Paths).Count;
+
+        public bool IsReadOnly => ((ICollection<AirportCollection>)Paths).IsReadOnly;
+
         public AirportToAirportPaths(List<AirportCollection> paths)
         {
             Paths = paths;
@@ -34,13 +39,13 @@ namespace Selenium_Skyscanner
             return func;
         }
 
-        public string GetCollectionsAsPaths()
+        public string GetCollectionsAsPaths(bool excelFriendly)
         {
             StringBuilder sb = new StringBuilder("");
             foreach (AirportCollection path in Paths)
             {
                 if (sb.Length > 0) sb.Append($"{Environment.NewLine}");
-                sb.Append(path.PrintCollectionAsPath());
+                sb.Append(path.PrintCollectionAsPath(excelFriendly));
             }
             return sb.ToString();
         }
@@ -58,6 +63,31 @@ namespace Selenium_Skyscanner
         public void Insert(int index, AirportCollection collection)
         {
             Paths.Insert(index, collection);
+        }
+
+        public void Add(AirportCollection item)
+        {
+            ((ICollection<AirportCollection>)Paths).Add(item);
+        }
+
+        public void Clear()
+        {
+            ((ICollection<AirportCollection>)Paths).Clear();
+        }
+
+        public bool Contains(AirportCollection item)
+        {
+            return ((ICollection<AirportCollection>)Paths).Contains(item);
+        }
+
+        public void CopyTo(AirportCollection[] array, int arrayIndex)
+        {
+            ((ICollection<AirportCollection>)Paths).CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(AirportCollection item)
+        {
+            return ((ICollection<AirportCollection>)Paths).Remove(item);
         }
     }
 }
