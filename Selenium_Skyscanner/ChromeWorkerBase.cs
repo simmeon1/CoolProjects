@@ -23,9 +23,16 @@ namespace Selenium_Skyscanner
             return FindElement(By.Id(elementId), 0);
         }
 
-        protected IWebElement GetElementWithCssSelector(string cssSelector, int indexOfItem)
+        protected IWebElement GetElementWithXPath(string xpath)
         {
-            return FindElement(By.CssSelector(cssSelector), indexOfItem);
+            try
+            {
+                return Wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(xpath)));
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         private IWebElement FindElement(By by, int indexOfItem)
@@ -50,6 +57,11 @@ namespace Selenium_Skyscanner
             for (int i = 0; i < elements.Count; i++) if (i == index) return elements[i];
             return null;
         }
+
+        //protected IWebElement GetElementWithCssSelector(string cssSelector, int indexOfItem)
+        //{
+        //    return FindElement(By.CssSelector(cssSelector), indexOfItem);
+        //}
 
         //private static IWebElement FirstOrDefaultFromElements(ReadOnlyCollection<IWebElement> elements)
         //{

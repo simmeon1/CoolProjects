@@ -17,47 +17,47 @@ namespace Selenium_Skyscanner
         public void LookUpPathsOnGoogleFlights(AirportToAirportPaths paths)
         {
             Driver.Navigate().GoToUrl("https://www.google.com/travel/flights/search");
-            IWebElement cookiesIframe = GetElementWithCssSelector(@"iframe[class=""gb_da gb_fa""]", 0);
+            IWebElement cookiesIframe = GetElementWithXPath(@"/html/body/c-wiz[1]/div[1]/div[1]/div[2]/div[2]/iframe");
             if (cookiesIframe != null)
             {
                 Driver.SwitchTo().Frame(cookiesIframe);
-                IWebElement signinAgreeButton = GetElementWithId("introAgreeButton");
+                IWebElement signinAgreeButton = GetElementWithXPath("/html/body/div/c-wiz/div[2]/div/div/div/div/div[2]/form/div");
                 if (signinAgreeButton != null) signinAgreeButton.Click();
                 Driver.SwitchTo().DefaultContent();
             }
 
-            IWebElement oneWayOrRoundTripSelection = GetElementWithCssSelector("button[class=\"VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-INsAgc VfPpkd-LgbsSe-OWXEXe-dgl2Hf Rj2Mlf OLiIxf PDpWxe BobFtf\"]", 0);
+            IWebElement oneWayOrRoundTripSelection = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[1]/div[1]/div/div[1]/div[1]/div/button");
             oneWayOrRoundTripSelection.Click();
 
-            IWebElement oneWayButton = GetElementWithCssSelector("ul[class=\"Akxp3 d0tCmb Lxea9c\"] > li", 1);
+            IWebElement oneWayButton = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[1]/div[1]/div/div[1]/div[2]/div[2]/ul/li[2]");
             oneWayButton.Click();
 
-            IWebElement originInput = GetElementWithCssSelector("input[class=\"II2One j0Ppje zmMKJ LbIaRd\"]", 0);
+            IWebElement originInput = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[1]/div/div/input");
             originInput.Click();
             Thread.Sleep(100);
-            IWebElement originInputUpdated = GetElementWithCssSelector("input[class=\"II2One j0Ppje zmMKJ LbIaRd\"]", 2);
+            IWebElement originInputUpdated = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[2]/div[1]/div[1]/div/input");
             originInputUpdated.Clear();
             originInputUpdated.SendKeys("BOJ");
 
             Thread.Sleep(500);
-            IWebElement origin_firstChoice = GetElementWithCssSelector("ul[class=\"DFGgtd\"] > li", 0);
+            IWebElement origin_firstChoice = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[3]/ul/li[1]");
             origin_firstChoice.Click();
 
-            IWebElement destinationInput = GetElementWithCssSelector("input[class=\"II2One j0Ppje zmMKJ LbIaRd\"]", 2);
+            IWebElement destinationInput = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[5]/div/div/div[1]/div/div/input");
             destinationInput.Click();
             Thread.Sleep(100);
-            IWebElement destinationInputUpdated = GetElementWithCssSelector("input[class=\"II2One j0Ppje zmMKJ LbIaRd\"]", 2);
+            IWebElement destinationInputUpdated = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[2]/div[1]/div[1]/div/input");
             destinationInputUpdated.Clear();
             destinationInputUpdated.SendKeys("LTN");
 
             Thread.Sleep(500);
-            IWebElement destination_firstChoice = GetElementWithCssSelector("ul[class=\"DFGgtd\"] > li", 0);
+            IWebElement destination_firstChoice = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[3]/ul/li[1]");
             destination_firstChoice.Click();
 
-            IWebElement searchButton = GetElementWithCssSelector("button[class=\"VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-k8QpJ nCP5yc AjY5Oe\"]", 0);
+            IWebElement searchButton = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[2]/div/button");
             searchButton.Click();
 
-            IWebElement dateGrid = GetElementWithCssSelector("button[class=\"VfPpkd-LgbsSe ksBjEc lKxP2d uRHSYe YwkhSe\"]", 0);
+            IWebElement dateGrid = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[3]/div/div[2]/div[1]/div[2]/div/div/div[1]/button/span");
             dateGrid.Click();
         }
     }
