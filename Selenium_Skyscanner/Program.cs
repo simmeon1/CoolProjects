@@ -30,6 +30,9 @@ namespace Selenium_Skyscanner
             AirportToAirportPathsFinder pathsFinder = new AirportToAirportPathsFinder(fullCollection);
             AirportToAirportPaths paths = pathsFinder.FindPathsBetweenTwoAirports("BOJ", "ABZ", stopAtFirstResults: false, maxAmountOfTransfers: 1);
             string pathsStr = paths.GetCollectionsAsPaths(excelFriendly: true);
+
+            ChromeWorker_GoogleFlights googleWorker = new ChromeWorker_GoogleFlights();
+            googleWorker.LookUpPathsOnGoogleFlights(paths);
         }
     }
 }

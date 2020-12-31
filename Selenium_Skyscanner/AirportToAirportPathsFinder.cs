@@ -5,12 +5,11 @@ namespace Selenium_Skyscanner
 {
     public class AirportToAirportPathsFinder
     {
+        private AirportCollection Airports { get; set; }
         public AirportToAirportPathsFinder(AirportCollection airports)
         {
             Airports = airports;
         }
-
-        public AirportCollection Airports { get; set; }
 
         public AirportToAirportPaths FindPathsBetweenTwoAirports(string origin, string destination, bool stopAtFirstResults, int maxAmountOfTransfers)
         {

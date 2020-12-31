@@ -10,26 +10,22 @@ using System.Text.RegularExpressions;
 
 namespace Selenium_Skyscanner
 {
-    public class ChromeWorker_FlightsFromDotCom
+    public class ChromeWorker_FlightsFromDotCom : ChromeWorkerBase
     {
-        private ChromeDriver Driver;
-
-        public ChromeWorker_FlightsFromDotCom()
+        private Stopwatch TotalStopwatch { get; set; }
+        private Stopwatch AirportStopwatch { get; set; }
+        public ChromeWorker_FlightsFromDotCom() : base()
         {
-            Driver = new ChromeDriver();
             TotalStopwatch = new Stopwatch();
             AirportStopwatch = new Stopwatch();
         }
-
-        public Stopwatch TotalStopwatch { get; private set; }
-        public Stopwatch AirportStopwatch { get; private set; }
 
         public Dictionary<string, string> GetAllAirportsFromFlightsFromDotCom()
         {
             Dictionary<string, string> airports = new Dictionary<string, string>();
 
             Driver.Navigate().GoToUrl("https://www.flightsfrom.com/");
-            IWebElement searchField = GetElementWithKnownId("search");
+            IWebElement searchField = GetElementWithId("search");
             searchField.Click();
 
             List<string> listOfRandommisedAirports = GetListOfRandomisedAirports();
@@ -89,14 +85,6 @@ namespace Selenium_Skyscanner
                 }
             }
             return returnList;
-        }
-
-        private IWebElement GetElementWithKnownId(string elementId)
-        {
-            ReadOnlyCollection<IWebElement> buttons = Driver.FindElementsById(elementId);
-            if (!buttons.Any()) return null;
-            IWebElement button = buttons[0];
-            return button;
         }
 
         public AirportCollection GetAirportCollectionFromDictionary(Dictionary<string, string> dict)

@@ -10,7 +10,7 @@ namespace Selenium_Skyscanner
     [DebuggerDisplay("Count = {Airports.Count}")]
     public class AirportCollection : IList<Airport>
     {
-        public List<Airport> Airports { get; set; }
+        private List<Airport> Airports { get; set; }
 
         public int Count => ((ICollection<Airport>)Airports).Count;
 
