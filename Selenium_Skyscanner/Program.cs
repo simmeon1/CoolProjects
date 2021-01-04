@@ -28,7 +28,7 @@ namespace Selenium_Skyscanner
             AirportCollection fullCollection = JsonConvert.DeserializeObject<AirportCollection>(File.ReadAllText("airportsWithDestinations.json"));
             fullCollection.UpdateDestinationsWithCircularReferences();
             AirportToAirportPathsFinder pathsFinder = new AirportToAirportPathsFinder(fullCollection);
-            AirportToAirportPaths paths = pathsFinder.FindPathsBetweenTwoAirports("BOJ", "ABZ", stopAtFirstResults: false, maxAmountOfTransfers: 1);
+            AirportToAirportPaths paths = pathsFinder.FindPathsBetweenTwoAirports("VAR", "ABZ", stopAtFirstResults: false, maxAmountOfTransfers: 1);
             string pathsStr = paths.GetCollectionsAsPaths(excelFriendly: true);
 
             ChromeWorker_GoogleFlights googleWorker = new ChromeWorker_GoogleFlights();
