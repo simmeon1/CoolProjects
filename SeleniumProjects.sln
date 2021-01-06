@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Selenium_Flights", "Selenium_Skyscanner\Selenium_Flights.csproj", "{184BD415-4313-4EDC-B8CC-AAB143EF253D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Selenium_Flights", "Selenium_Flights\Selenium_Flights.csproj", "{184BD415-4313-4EDC-B8CC-AAB143EF253D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExRxDotNet", "ExRxDotNet\ExRxDotNet.csproj", "{F6B8E381-C771-4C7A-8990-2F12D7EE0D17}"
 EndProject
