@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using ClassLibrary;
 
 namespace ExRxDotNet
 {
@@ -6,7 +8,8 @@ namespace ExRxDotNet
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            ChromeWorker_ExRx chrome = new ChromeWorker_ExRx();
+            Dictionary<string, string> groupsAndLinks = chrome.GetLinksForMajorGroupsFromMainPage();
         }
     }
 }

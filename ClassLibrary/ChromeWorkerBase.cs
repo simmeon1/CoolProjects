@@ -3,6 +3,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -32,6 +33,19 @@ namespace ClassLibrary
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+        protected ReadOnlyCollection<IWebElement> GetElementsWithCSSSelector(string cssSelector)
+        {
+            try
+            {
+                bool elementsExist = Wait.Until(d => Driver.FindElementsByCssSelector(cssSelector).Any());
+                return Driver.FindElementsByCssSelector(cssSelector);
+            }
+            catch (Exception ex)
+            {
+                return new ReadOnlyCollection<IWebElement>(new List<IWebElement>());
             }
         }
 
