@@ -9,7 +9,10 @@ namespace ExRxDotNet
         static void Main(string[] args)
         {
             ChromeWorker_ExRx chrome = new ChromeWorker_ExRx();
-            Dictionary<string, string> groupsAndLinks = chrome.GetLinksForMajorGroupsFromMainPage();
+            MuscleGroups muscleGroups = chrome.GetMuscleGroupsAndLinksFromMainPage();
+            chrome.GetExercisesForMuscleGroups(muscleGroups);
+            muscleGroups.SortExercisesByPopularity();
+            string str = muscleGroups.ToJson();
         }
     }
 }

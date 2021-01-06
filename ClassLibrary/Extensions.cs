@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Selenium_Flights
+namespace ClassLibrary
 {
-    static class Extensions
+    public static class Extensions
     {
         public static string ToJson(this object obj, Formatting formatting = Formatting.Indented)
         {
