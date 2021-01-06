@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Selenium_Skyscanner
+namespace Selenium_Flights
 {
     [DebuggerDisplay("Count = {Airports.Count}")]
     public class AirportCollection : IList<Airport>

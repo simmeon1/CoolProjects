@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Selenium_Skyscanner
+namespace Selenium_Flights
 {
     [DebuggerDisplay("Count = {Paths.Count}")]
     public class AirportToAirportPaths : IList<AirportCollection>

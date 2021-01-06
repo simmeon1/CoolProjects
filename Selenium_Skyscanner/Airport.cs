@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Selenium_Skyscanner
+namespace Selenium_Flights
 {
     [DebuggerDisplay("{ToString()}, Destinations = {DestinationAirports.Count}")]
     public class Airport : IEquatable<Airport>

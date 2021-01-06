@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using ClassLibrary;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading;
 
-namespace Selenium_Skyscanner
+namespace Selenium_Flights
 {
     public class ChromeWorker_GoogleFlights : ChromeWorkerBase
     {

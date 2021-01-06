@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using ClassLibrary;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Selenium_Skyscanner
+namespace Selenium_Flights
 {
     public class ChromeWorker_FlightsFromDotCom : ChromeWorkerBase
     {

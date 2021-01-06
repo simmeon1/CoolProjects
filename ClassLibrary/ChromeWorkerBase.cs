@@ -6,7 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Selenium_Skyscanner
+namespace ClassLibrary
 {
     public abstract class ChromeWorkerBase
     {

@@ -10,7 +10,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using System.IO;
 
-namespace Selenium_Skyscanner
+namespace Selenium_Flights
 {
     class Program
     {

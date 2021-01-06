@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Selenium_Skyscanner
+namespace Selenium_Flights
 {
     public class AirportToAirportPathsFinder
     {
