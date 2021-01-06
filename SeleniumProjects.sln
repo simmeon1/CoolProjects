@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Selenium_Skyscanner", "Selenium_Skyscanner\Selenium_Skyscanner.csproj", "{184BD415-4313-4EDC-B8CC-AAB143EF253D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Selenium_Flights", "Selenium_Skyscanner\Selenium_Flights.csproj", "{184BD415-4313-4EDC-B8CC-AAB143EF253D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExRxDotNet", "ExRxDotNet\ExRxDotNet.csproj", "{F6B8E381-C771-4C7A-8990-2F12D7EE0D17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{541AC4D8-CE42-48D6-B1E9-B247048E654E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{184BD415-4313-4EDC-B8CC-AAB143EF253D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{184BD415-4313-4EDC-B8CC-AAB143EF253D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{184BD415-4313-4EDC-B8CC-AAB143EF253D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6B8E381-C771-4C7A-8990-2F12D7EE0D17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6B8E381-C771-4C7A-8990-2F12D7EE0D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6B8E381-C771-4C7A-8990-2F12D7EE0D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6B8E381-C771-4C7A-8990-2F12D7EE0D17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{541AC4D8-CE42-48D6-B1E9-B247048E654E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{541AC4D8-CE42-48D6-B1E9-B247048E654E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{541AC4D8-CE42-48D6-B1E9-B247048E654E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{541AC4D8-CE42-48D6-B1E9-B247048E654E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -57,30 +57,5 @@ namespace Selenium_Skyscanner
             for (int i = 0; i < elements.Count; i++) if (i == index) return elements[i];
             return null;
         }
-
-        //protected IWebElement GetElementWithCssSelector(string cssSelector, int indexOfItem)
-        //{
-        //    return FindElement(By.CssSelector(cssSelector), indexOfItem);
-        //}
-
-        //private static IWebElement FirstOrDefaultFromElements(ReadOnlyCollection<IWebElement> elements)
-        //{
-        //    if (!elements.Any()) return null;
-        //    IWebElement button = elements[0];
-        //    return button;
-        //}
-
-        //protected IWebElement GetElementWithKnownTagNameAndValue(string tagName, string tagValue)
-        //{
-        //    ReadOnlyCollection<IWebElement> elements = Driver.FindElementsByTagName(tagName);
-        //    if (!elements.Any()) return null;
-        //    return FirstOrDefaultFromElements(elements);
-        //}
-
-        //protected IWebElement GetElementWithKnownXPath(string xpath)
-        //{
-        //    ReadOnlyCollection<IWebElement> elements = Driver.FindElementsByXPath(xpath);
-        //    return FirstOrDefaultFromElements(elements);
-        //}
     }
 }
