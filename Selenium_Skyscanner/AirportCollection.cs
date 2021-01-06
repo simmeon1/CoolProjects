@@ -17,6 +17,7 @@ namespace Selenium_Skyscanner
         public bool IsReadOnly => ((ICollection<Airport>)Airports).IsReadOnly;
 
         public Airport this[int index] { get => ((IList<Airport>)Airports)[index]; set => ((IList<Airport>)Airports)[index] = value; }
+        public Airport this[string iata] { get => ((IList<Airport>)Airports).FirstOrDefault(a => a.IATA.ToUpper().Equals(iata.ToUpper())); }
 
         public AirportCollection()
         {
