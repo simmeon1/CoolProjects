@@ -23,10 +23,7 @@ namespace ExRxDotNet
 
         internal void SortExercisesByPopularity()
         {
-            foreach (MuscleGroup group in List)
-            {
-                group.ExercisesAndLinks.OrderByDescending(e => e.Popularity);
-            }
+            foreach (MuscleGroup group in List) group.ExercisesAndLinks = group.ExercisesAndLinks.OrderByDescending(e => e.Popularity).ToList();
         }
 
         public List<MuscleGroup> List { get; set; }

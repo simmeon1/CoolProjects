@@ -11,9 +11,9 @@ namespace ExRxDotNet
         public string Exercise { get; set; }
         public List<string> Links { get; set; }
         public int Popularity { get => Links.Count; }
-        public ExerciseAndLinks(string exercise)
+        public ExerciseAndLinks()
         {
-            Exercise = exercise;
+            Exercise = "";
             Links = new List<string>();
         }
         

@@ -23,5 +23,17 @@ namespace ClassLibrary
         {
             return string.IsNullOrEmpty(str);
         }
+
+        public static T ToObject<T>(this string str)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(str);
+            }
+            catch (Exception ex)
+            {
+                return default(T);
+            }
+        }
     }
 }
