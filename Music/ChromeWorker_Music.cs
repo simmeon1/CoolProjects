@@ -14,14 +14,23 @@ namespace Music
         public ChromeWorker_Music() : base()
         {
         }
+
         /// <summary>
         /// Goes through the links in <see href="https://en.wikipedia.org/wiki/List_of_Billboard_Hot_100_top-ten_singles"/>.
         /// </summary>
         /// <returns>A dict. Key is int (year), value is list of wikipedia songs.</returns>
-        public Dictionary<int, List<WikipediaSong>> GoThroughWikipediaLinksAndCollectSongs()
+        public Dictionary<int, List<WikipediaSong>> GoThroughWikipediaLinksAndCollectSongs_US()
         {
-            List<string> links = GetWikipediaLinks();
+            return CollectoSongsFromPages(GetWikipediaLinks_US());
+        }
 
+        public Dictionary<int, List<WikipediaSong>> GoThroughWikipediaLinksAndCollectSongs_UK()
+        {
+            return CollectoSongsFromPages(GetWikipediaLinks_UK());
+        }
+
+        private Dictionary<int, List<WikipediaSong>> CollectoSongsFromPages(List<string> links)
+        {
             Dictionary<int, List<WikipediaSong>> dict = new Dictionary<int, List<WikipediaSong>>();
             foreach (string link in links)
             {
@@ -39,6 +48,9 @@ namespace Music
                     tableWithSongs = table;
                     maxRowCount = rowCount;
                 }
+
+                ReadOnlyCollection<IWebElement> references = GetElementsWithCSSSelector(".reference");
+                foreach (IWebElement reference in references) Driver.ExecuteScript("arguments[0].hidden = true", reference);
 
                 int columnWithSingles = 0;
                 int columnWithArtists = 0;
@@ -75,14 +87,15 @@ namespace Music
                         if (rowSpanText.IsNullOrEmpty()) continue;
                         int rowSpan = int.Parse(rowSpanText);
                         if (rowSpan < 2) continue;
-                        string text = cell.GetProperty("innerText");
+                        string text = cell.GetProperty("innerText").Replace("\n", " ").Replace("\r", " ");
+                        string textShortened = Regex.Replace(text, "\\s+", " ").Replace("\"", "");
                         Driver.ExecuteScript("arguments[0].rowSpan = 1", cell);
                         for (int k = 1; k < rowSpan; k++)
                         {
                             IWebElement nextRow = tableRows[i + k];
                             Driver.ExecuteScript($"arguments[0].insertCell({j})", nextRow);
                             ReadOnlyCollection<IWebElement> cells = GetCellsOfRow(nextRow);
-                            Driver.ExecuteScript($"arguments[0].innerText = '{text}'", cells[j]);
+                            Driver.ExecuteScript($"arguments[0].innerText = '{textShortened}'", cells[j]);
                         }
                     }
                 }
@@ -95,11 +108,11 @@ namespace Music
                     if (rowCells.Count != countOfCellsInRelevantRows) continue;
                     string artist = rowCells[columnWithArtists].GetProperty("innerText");
                     string artistShortened = artist.Replace("\n", " ").Replace("\r", " ");
-                    artistShortened = Regex.Replace(artistShortened, "\\s+", " ");
+                    artistShortened = Regex.Replace(artistShortened, "\\s+", " ").Replace("\"", "");
                     string single = rowCells[columnWithSingles].GetProperty("innerText");
                     string singleShortened = single.Replace("\n", " ").Replace("\r", " ");
-                    singleShortened = Regex.Matches(singleShortened, "(\".*\")")[0].Groups[1].Value.Replace("\"", "");
                     singleShortened = Regex.Replace(singleShortened, "\\s+", " ");
+                    singleShortened = Regex.Matches(singleShortened, "(\".*\")")[0].Groups[1].Value.Replace("\"", "");
                     listOfSongs.Add(new WikipediaSong(artistShortened, singleShortened, year));
                 }
                 Debug.WriteLine($"Year: {year}, Rows: {tableRows.Count}, Found songs: {listOfSongs.Count}");

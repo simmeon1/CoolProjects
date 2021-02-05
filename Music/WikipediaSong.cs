@@ -17,10 +17,13 @@ namespace Music
             Artist = artist;
             Song = song;
             Year = year;
+            ListType = ListTypes.Unknown;
         }
 
         public string Artist { get; set; }
         public string Song { get; set; }
         public int Year { get; set; }
+        public ListTypes ListType { get; set; }
+        public string ListTypeName { get { return ListType.ToString(); } }
     }
 }
