@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ClassLibrary
 {
@@ -34,6 +35,20 @@ namespace ClassLibrary
             {
                 return default(T);
             }
+        }
+
+        public static T CloneObject<T>(this T inputObj)
+        {
+            if (inputObj == null) return default(T);
+            //Dim settings As JsonSerializerSettings = New JsonSerializerSettings With {.TypeNameHandling = TypeNameHandling.All}
+            T outputObj = JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(inputObj));
+            return outputObj;
+
+        }
+
+        public static bool MatchesRegex(this string str, string pattern, RegexOptions regexOptions = RegexOptions.None)
+        {
+            return Regex.IsMatch(str, pattern, regexOptions);
         }
     }
 }

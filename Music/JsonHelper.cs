@@ -24,15 +24,26 @@ namespace Music
                 new KeyValuePair<ListTypes, string>(ListTypes.TopTenUKandUSSingles, ListTypes.TopTenUKandUSSingles.ToString()),
             }
         );
-        public static Dictionary<int, List<WikipediaSong>> ReadJsonFile(ListTypes listType)
+
+        public static Dictionary<int, List<WikipediaSong>> ReadJsonFile_Dict(ListTypes listType)
+        {
+            return ReadJsonFile<Dictionary<int, List<WikipediaSong>>>(listType);
+        }
+        
+        public static List<WikipediaSong> ReadJsonFile_List(ListTypes listType)
+        {
+            return ReadJsonFile<List<WikipediaSong>>(listType);
+        }
+
+        private static T ReadJsonFile<T>(ListTypes listType)
         {
             try
             {
-                return JsonConvert.DeserializeObject<Dictionary<int, List<WikipediaSong>>>(File.ReadAllText(GetNameForJson(listType)));
+                return JsonConvert.DeserializeObject<T>(File.ReadAllText(GetNameForJson(listType)));
             }
             catch (Exception ex)
             {
-                return new Dictionary<int, List<WikipediaSong>>();
+                return default(T);
             }
         }
 

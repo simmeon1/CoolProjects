@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ClassLibrary;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Music
 {
@@ -18,21 +20,6 @@ namespace Music
             }
             return list;
         }
-
-
-        //public static Dictionary<int, List<WikipediaSong>> CombineLists(Dictionary<int, List<WikipediaSong>> bigger, Dictionary<int, List<WikipediaSong>> smaller)
-        //{
-        //    foreach (KeyValuePair<int, List<WikipediaSong>> yearAndSongs in bigger) if (smaller.ContainsKey(yearAndSongs.Key)) yearAndSongs.Value.AddRange(smaller[yearAndSongs.Key]);
-
-        //    Dictionary<int, List<WikipediaSong>> newDict = new Dictionary<int, List<WikipediaSong>>();
-        //    foreach (KeyValuePair<int, List<WikipediaSong>> yearAndSongs in bigger)
-        //    {
-        //        List<WikipediaSong> newList = new List<WikipediaSong>();
-        //        foreach (WikipediaSong song in yearAndSongs.Value) if (!newList.Any(s => s.Artist.Equals(song.Artist) && s.Song.Equals(song.Song))) newList.Add(song);
-        //        newDict.Add(yearAndSongs.Key, newList);
-        //    };
-        //    return newDict;
-        //}
 
         public static List<WikipediaSong> CombineLists(Dictionary<int, List<WikipediaSong>> dict1, Dictionary<int, List<WikipediaSong>> dict2)
         {
@@ -57,6 +44,82 @@ namespace Music
             {
                 listt.AddRange(list);
             }
+        }
+
+        public static List<WikipediaSong> GetListOfSongsWithBadArtistNames(List<WikipediaSong> list)
+        {
+            List<WikipediaSong> badList = new List<WikipediaSong>();
+            foreach (WikipediaSong song in list)
+            {
+                string artist = song.Artist;
+                //var words = artist.spl
+                //if (artist.MatchesRegex("^[A-Z]\\w+$") ||
+                //    artist.MatchesRegex("^[A-Z]\\w+ [A-Z]\\w+$") ||
+                //    artist.MatchesRegex("^[A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+$") ||
+                //    artist.MatchesRegex("^[A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+$") ||
+                //    artist.MatchesRegex("^[A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+$") ||
+                //    artist.MatchesRegex("^[A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+ [A-Z]\\w+$")
+                //) continue;
+
+                //if (artist.Contains(",") || artist.Contains("&") || artist.Contains("featuring") || artist.Contains("presents") || artist.Contains("with")) badList.Add(song);
+            }
+            return badList;
+        }
+
+        public static HashSet<char> GetSpecialChars(List<WikipediaSong> list)
+        {
+            HashSet<char> charList = new HashSet<char>();
+            foreach (WikipediaSong song in list)
+            {
+                string artist = song.Artist;
+                foreach (char ch in artist)
+                {
+                    if (Convert.ToString(ch).MatchesRegex("\\w") || Convert.ToString(ch).MatchesRegex("[0-9]")) continue;
+                    charList.Add(ch);
+                }
+            }
+            return charList;
+        }
+
+        public static HashSet<string> GetUnneccessaryWords(List<WikipediaSong> list)
+        {
+            HashSet<string> wordList = new HashSet<string>();
+            foreach (WikipediaSong song in list)
+            {
+                string artist = song.Artist;
+                string[] words = artist.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                foreach (string word in words)
+                {
+                    if (!word.MatchesRegex("^[A-Z]")) wordList.Add(word);
+                }
+            }
+            return wordList;
+        }
+
+        public static List<WikipediaSong> AddSongsFromBackslashes(List<WikipediaSong> list)
+        {
+            List<WikipediaSong> listClone = list.CloneObject();
+            for (int i = 0; i < listClone.Count; i++)
+            {
+                WikipediaSong song = listClone[i];
+                string sng = song.Song;
+                string[] names = sng.Split("/", StringSplitOptions.RemoveEmptyEntries);
+                if (names.Length == 1) continue;
+                for (int j = 0; j < names.Length; j++)
+                {
+                    string name = names[j];
+                    if (j == 0)
+                    {
+                        song.Song = name;
+                        continue;
+                    }
+                    WikipediaSong newSong = song.CloneObject();
+                    newSong.Song = name;
+                    listClone.Add(newSong);
+                }
+            }
+            List<WikipediaSong> sortedList = listClone.OrderBy(s => s.Year).ToList();
+            return sortedList;
         }
     }
 }
