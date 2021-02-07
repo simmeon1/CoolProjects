@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ClassLibrary;
 
 namespace Music
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            //ChromeWorker_Music chrome = new ChromeWorker_Music();
 
             //Dictionary<int, List<WikipediaSong>> ukSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_UK();
             //ListHelper.AddListTypePropertyToList(ukSongs, ListTypes.TopTenUKSingles).ToJson().WriteJsonFile(ListTypes.TopTenUKSingles);
@@ -29,6 +29,18 @@ namespace Music
 
             //var x = ListHelper.GetUnneccessaryWords(fullList).ToJson();
             //var x = ListHelper.AddSongsFromBackslashes(fullList);
+
+            ChromeWorker_Music chrome = new ChromeWorker_Music();
+
+            try
+            {
+                var task = chrome.UpdateSongsWithYouTubeData(fullList);
+                await task;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }
