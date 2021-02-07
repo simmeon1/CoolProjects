@@ -131,12 +131,7 @@ namespace Music
 
         public async Task UpdateSongsWithYouTubeData(List<WikipediaSong> list)
         {
-            string videoIdCommand = "return arguments[0].data.videoId";
-            string titleCommand = "return arguments[0].data.title.runs[0].text";
-            string viewCommand = "return arguments[0].data.viewCountText.simpleText";
-
             Driver.Navigate().GoToUrl("https://www.youtube.com/");
-            string lastFoundId = "";
             for (int i = 0; i < list.Count; i++)
             {
                 WikipediaSong song = list[i];
@@ -146,60 +141,19 @@ namespace Music
                 input.SendKeys($"{song.Artist} {song.Song}");
                 IWebElement searchButton = GetElementsWithCSSSelector("#search-icon-legacy").First();
                 searchButton.Click();
-
-                await Task.Delay(2000);
+                await Task.Delay(2500);
 
                 ReadOnlyCollection<IWebElement> results = GetElementsWithCSSSelector("#contents > ytd-video-renderer");
                 if (results == null || results.Count == 0) continue;
                 IWebElement firstResult = results.First();
 
-                bool idPopulated = PopulateProperty(song, videoIdCommand, ref firstResult);
-                while (!idPopulated) idPopulated = PopulateProperty(song, videoIdCommand, ref firstResult);
-
-                //song.YouTubeId = (string)Driver.ExecuteScript(videoIdCommand, firstResult);
-
-                while (song.YouTubeId.Equals(lastFoundId))
-                {
-                    results = GetElementsWithCSSSelector("#contents > ytd-video-renderer");
-                    if (results == null || results.Count == 0) continue;
-                    firstResult = results.First();
-                    idPopulated = PopulateProperty(song, videoIdCommand, ref firstResult);
-                    while (!idPopulated) idPopulated = PopulateProperty(song, videoIdCommand, ref firstResult);
-                }
-                lastFoundId = song.YouTubeId;
-
-                bool titlePopulated = PopulateProperty(song, titleCommand, ref firstResult);
-                while (!titlePopulated) titlePopulated = PopulateProperty(song, titleCommand, ref firstResult);
-
-                bool viewsPopulated = PopulateProperty(song, viewCommand, ref firstResult);
-                while (!viewsPopulated) viewsPopulated = PopulateProperty(song, viewCommand, ref firstResult);
-
-                //song.YouTubeName = (string)Driver.ExecuteScript("return arguments[0].data.title.runs[0].text", firstResult);
-                //string viewsString = (string)Driver.ExecuteScript("return arguments[0].data.viewCountText.simpleText", firstResult);
-                //song.YouTubeViews = long.Parse(viewsString.Replace(" views", "").Replace(",", ""));
+                song.YouTubeId = (string)Driver.ExecuteScript("return arguments[0].data.videoId", firstResult);
+                song.YouTubeName = (string)Driver.ExecuteScript("return arguments[0].data.title.runs[0].text", firstResult);
+                string viewsString = (string)Driver.ExecuteScript("return arguments[0].data.viewCountText.simpleText", firstResult);
+                song.YouTubeViews = long.Parse(viewsString.Replace(" views", "").Replace(",", ""));
                 Debug.WriteLine($"{i}/{ list.Count}");
             }
             JsonHelper.WriteJsonFile(list.ToJson(), ListTypes.TopTenUKandUSSingles);
-        }
-
-        private bool PopulateProperty(WikipediaSong song, string command, ref IWebElement element)
-        {
-            try
-            {
-                if (command.Contains("videoId")) song.YouTubeId = (string)Driver.ExecuteScript(command, element);
-                else if (command.Contains("title")) song.YouTubeName = (string)Driver.ExecuteScript(command, element);
-                else if (command.Contains("viewCountText"))
-                {
-                    string viewsString = (string)Driver.ExecuteScript(command, element);
-                    song.YouTubeViews = long.Parse(viewsString.Replace(" views", "").Replace(",", ""));
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                element = GetElementsWithCSSSelector("#contents > ytd-video-renderer").First();
-                return false;
-            }
         }
     }
 }
