@@ -45,7 +45,7 @@ namespace Music
             //List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
             //var bsdfsdf = removedYouTubeDuplicates.ToJson();
 
-            string x = ListHelper.GetYouTubeVideosArray(fullList);
+            string x = await ListHelper.GetYouTubeVideosArrayAsync(fullList);
         }
     }
 }

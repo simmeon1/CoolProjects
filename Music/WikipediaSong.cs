@@ -27,5 +27,27 @@ namespace Music
         public string YouTubeId { get; set; } = "";
         public string YouTubeName { get; set; } = "";
         public long YouTubeViews { get; set; } = 0;
+        public string YouTubeViewsString
+        {
+            get
+            {
+                string result = "";
+                string viewsStr = YouTubeViews.ToString();
+                char[] digitsList = viewsStr.ToCharArray();
+
+                int digitsAdded = 0;
+                for (int i = 0; i < digitsList.Length; i++)
+                {
+                    result = digitsList[digitsList.Length - 1 - i] + result;
+                    digitsAdded++;
+                    if (digitsAdded == 3 && i < digitsList.Length - 1)
+                    {
+                        result = "," + result;
+                        digitsAdded = 0;
+                    }
+                }
+                return result + " views";
+            }
+        }
     }
 }
