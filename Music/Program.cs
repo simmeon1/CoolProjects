@@ -42,8 +42,10 @@ namespace Music
             //    throw;
             //}
 
-            List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
-            var bsdfsdf = removedYouTubeDuplicates.ToJson();
+            //List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
+            //var bsdfsdf = removedYouTubeDuplicates.ToJson();
+
+            string x = ListHelper.GetYouTubeVideosArray(fullList);
         }
     }
 }

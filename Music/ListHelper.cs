@@ -66,6 +66,27 @@ namespace Music
             return badList;
         }
 
+        internal static string GetYouTubeVideosArray(List<WikipediaSong> fullList)
+        {
+            List<WikipediaSong> filteredList = fullList.Where(s =>
+                                        s.Year >= 1970
+                                        && s.Year <= 2000)
+                                .OrderByDescending(s => s.YouTubeViews)
+                                .ToList();
+            //filteredList.Shuffle();
+            string filteredListJson = filteredList.ToJson();
+
+            StringBuilder str = new StringBuilder("[");
+            foreach (WikipediaSong song in filteredList)
+            {
+                if (str.Length > 1) str.Append(", ");
+                str.Append($"'{song.YouTubeId}'");
+            }
+            str.Append("]");
+            string result = str.ToString();
+            return result;
+        }
+
         internal static List<WikipediaSong> RemoveYouTubeDuplicates(List<WikipediaSong> fullList)
         {
             List<WikipediaSong> orderedList = fullList.OrderBy(s => s.Year).ThenBy(s => s.Artist).ThenBy(s => s.Song).ToList();
