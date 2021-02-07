@@ -66,6 +66,17 @@ namespace Music
             return badList;
         }
 
+        internal static List<WikipediaSong> RemoveYouTubeDuplicates(List<WikipediaSong> fullList)
+        {
+            List<WikipediaSong> orderedList = fullList.OrderBy(s => s.Year).ThenBy(s => s.Artist).ThenBy(s => s.Song).ToList();
+            List<WikipediaSong> cleanList = new List<WikipediaSong>();
+            foreach (WikipediaSong song in orderedList)
+            {
+                if (!cleanList.Any(s => s.YouTubeId.Equals(song.YouTubeId))) cleanList.Add(song);
+            }
+            return cleanList;
+        }
+
         public static HashSet<char> GetSpecialChars(List<WikipediaSong> list)
         {
             HashSet<char> charList = new HashSet<char>();

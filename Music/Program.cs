@@ -30,17 +30,20 @@ namespace Music
             //var x = ListHelper.GetUnneccessaryWords(fullList).ToJson();
             //var x = ListHelper.AddSongsFromBackslashes(fullList);
 
-            ChromeWorker_Music chrome = new ChromeWorker_Music();
+            //ChromeWorker_Music chrome = new ChromeWorker_Music();
 
-            try
-            {
-                var task = chrome.UpdateSongsWithYouTubeData(fullList);
-                await task;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            //try
+            //{
+            //    var task = chrome.UpdateSongsWithYouTubeData(fullList);
+            //    await task;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw;
+            //}
+
+            List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
+            var bsdfsdf = removedYouTubeDuplicates.ToJson();
         }
     }
 }
