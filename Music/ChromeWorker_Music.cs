@@ -21,22 +21,22 @@ namespace Music
         /// Goes through the links in <see href="https://en.wikipedia.org/wiki/List_of_Billboard_Hot_100_top-ten_singles"/>.
         /// </summary>
         /// <returns>A dict. Key is int (year), value is list of wikipedia songs.</returns>
-        public Dictionary<int, List<WikipediaSong>> GoThroughWikipediaLinksAndCollectSongs_US()
+        public Dictionary<int, List<Song>> GoThroughWikipediaLinksAndCollectSongs_US()
         {
             return CollectoSongsFromWikipediaPages(GetWikipediaLinks_US());
         }
 
-        public Dictionary<int, List<WikipediaSong>> GoThroughWikipediaLinksAndCollectSongs_UK()
+        public Dictionary<int, List<Song>> GoThroughWikipediaLinksAndCollectSongs_UK()
         {
             return CollectoSongsFromWikipediaPages(GetWikipediaLinks_UK());
         }
 
-        private Dictionary<int, List<WikipediaSong>> CollectoSongsFromWikipediaPages(List<string> links)
+        private Dictionary<int, List<Song>> CollectoSongsFromWikipediaPages(List<string> links)
         {
-            Dictionary<int, List<WikipediaSong>> dict = new Dictionary<int, List<WikipediaSong>>();
+            Dictionary<int, List<Song>> dict = new Dictionary<int, List<Song>>();
             foreach (string link in links)
             {
-                List<WikipediaSong> listOfSongs = new List<WikipediaSong>();
+                List<Song> listOfSongs = new List<Song>();
                 int year = int.Parse(Regex.Matches(link, "([0-9][0-9][0-9][0-9])")[0].Groups[1].Value);
                 Driver.Navigate().GoToUrl(link);
                 ReadOnlyCollection<IWebElement> tables = GetElementsWithCSSSelector("table");
@@ -115,7 +115,7 @@ namespace Music
                     string singleShortened = single.Replace("\n", " ").Replace("\r", " ");
                     singleShortened = Regex.Replace(singleShortened, "\\s+", " ");
                     singleShortened = Regex.Matches(singleShortened, "(\".*\")")[0].Groups[1].Value.Replace("\"", "");
-                    listOfSongs.Add(new WikipediaSong(artistShortened, singleShortened, year));
+                    listOfSongs.Add(new Song(artistShortened, singleShortened, year));
                 }
                 Debug.WriteLine($"Year: {year}, Rows: {tableRows.Count}, Found songs: {listOfSongs.Count}");
                 dict.Add(year, listOfSongs);
@@ -129,16 +129,16 @@ namespace Music
             return (ReadOnlyCollection<IWebElement>)Driver.ExecuteScript("return arguments[0].cells", row);
         }
 
-        public async Task UpdateSongsWithYouTubeData(List<WikipediaSong> list)
+        public async Task UpdateSongsWithYouTubeData(List<Song> list)
         {
             Driver.Navigate().GoToUrl("https://www.youtube.com/");
             for (int i = 0; i < list.Count; i++)
             {
-                WikipediaSong song = list[i];
+                Song song = list[i];
                 IWebElement input = GetElementsWithCSSSelector("input#search").First();
                 input.Click();
                 input.Clear();
-                input.SendKeys($"{song.Artist} {song.Song}");
+                input.SendKeys($"{song.Artist} {song.Title}");
                 IWebElement searchButton = GetElementsWithCSSSelector("#search-icon-legacy").First();
                 searchButton.Click();
                 await Task.Delay(2500);
@@ -153,7 +153,7 @@ namespace Music
                 song.YouTubeViews = long.Parse(viewsString.Replace(" views", "").Replace(",", ""));
                 Debug.WriteLine($"{i}/{ list.Count}");
             }
-            JsonHelper.WriteJsonFile(list.ToJson(), ListTypes.TopTenUKandUSSingles);
+            Music_JsonHelper.WriteJsonFile(list.ToJson(), ListTypes.TopTenUKandUSSingles);
         }
     }
 }
