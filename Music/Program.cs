@@ -22,7 +22,7 @@ namespace Music
 
             //ListHelper.CombineLists(ukSongs, usSongs).ToJson().WriteJsonFile(ListTypes.TopTenUKandUSSingles);
 
-            List<Song> fullList = Music_JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
+            List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
             //List<WikipediaSong> badList = ListHelper.GetListOfSongsWithBadArtistNames(fullList);
             //var bsdfsdf = badList.ToJson();
             //var x = 1;
@@ -42,7 +42,7 @@ namespace Music
             //    throw;
             //}
 
-            List<Song> removedYouTubeDuplicates = Music_ListHelper.RemoveYouTubeDuplicates(fullList);
+            List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
             var bsdfsdf = removedYouTubeDuplicates.ToJson();
         }
     }

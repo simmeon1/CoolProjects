@@ -5,15 +5,15 @@ using ClassLibrary;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ClassLibrary
+namespace Music
 {
-    public static class Music_ListHelper
+    public static class ListHelper
     {
-        public static Dictionary<int, List<Song>> AddListTypePropertyToList(Dictionary<int, List<Song>> list, ListTypes type)
+        public static Dictionary<int, List<WikipediaSong>> AddListTypePropertyToList(Dictionary<int, List<WikipediaSong>> list, ListTypes type)
         {
-            foreach (KeyValuePair<int, List<Song>> pair in list)
+            foreach (KeyValuePair<int, List<WikipediaSong>> pair in list)
             {
-                foreach (Song song in pair.Value)
+                foreach (WikipediaSong song in pair.Value)
                 {
                     song.ListType = type;
                 }
@@ -21,35 +21,35 @@ namespace ClassLibrary
             return list;
         }
 
-        public static List<Song> CombineLists(Dictionary<int, List<Song>> dict1, Dictionary<int, List<Song>> dict2)
+        public static List<WikipediaSong> CombineLists(Dictionary<int, List<WikipediaSong>> dict1, Dictionary<int, List<WikipediaSong>> dict2)
         {
-            List<Song> unsortedList = new List<Song>();
+            List<WikipediaSong> unsortedList = new List<WikipediaSong>();
             AddListsFromDictToList(dict1, unsortedList);
             AddListsFromDictToList(dict2, unsortedList);
 
-            List<Song> sortedList = unsortedList.OrderBy(s => s.Year).ToList();
-            List<Song> cleanList = new List<Song>();
-            foreach (Song song in sortedList)
+            List<WikipediaSong> sortedList = unsortedList.OrderBy(s => s.Year).ToList();
+            List<WikipediaSong> cleanList = new List<WikipediaSong>();
+            foreach (WikipediaSong song in sortedList)
             {
-                if (cleanList.Any(s => s.Artist.Equals(song.Artist) && s.Title.Equals(song.Title))) continue;
+                if (cleanList.Any(s => s.Artist.Equals(song.Artist) && s.Song.Equals(song.Song))) continue;
                 cleanList.Add(song);
             }
             return cleanList;
         }
 
-        private static void AddListsFromDictToList(Dictionary<int, List<Song>> dict1, List<Song> listt)
+        private static void AddListsFromDictToList(Dictionary<int, List<WikipediaSong>> dict1, List<WikipediaSong> listt)
         {
-            List<List<Song>> listOfLists1 = dict1.Values.ToList();
-            foreach (List<Song> list in listOfLists1)
+            List<List<WikipediaSong>> listOfLists1 = dict1.Values.ToList();
+            foreach (List<WikipediaSong> list in listOfLists1)
             {
                 listt.AddRange(list);
             }
         }
 
-        public static List<Song> GetListOfSongsWithBadArtistNames(List<Song> list)
+        public static List<WikipediaSong> GetListOfSongsWithBadArtistNames(List<WikipediaSong> list)
         {
-            List<Song> badList = new List<Song>();
-            foreach (Song song in list)
+            List<WikipediaSong> badList = new List<WikipediaSong>();
+            foreach (WikipediaSong song in list)
             {
                 string artist = song.Artist;
                 //var words = artist.spl
@@ -66,21 +66,21 @@ namespace ClassLibrary
             return badList;
         }
 
-        public static List<Song> RemoveYouTubeDuplicates(List<Song> fullList)
+        internal static List<WikipediaSong> RemoveYouTubeDuplicates(List<WikipediaSong> fullList)
         {
-            List<Song> orderedList = fullList.OrderBy(s => s.Year).ThenBy(s => s.Artist).ThenBy(s => s.Title).ToList();
-            List<Song> cleanList = new List<Song>();
-            foreach (Song song in orderedList)
+            List<WikipediaSong> orderedList = fullList.OrderBy(s => s.Year).ThenBy(s => s.Artist).ThenBy(s => s.Song).ToList();
+            List<WikipediaSong> cleanList = new List<WikipediaSong>();
+            foreach (WikipediaSong song in orderedList)
             {
                 if (!cleanList.Any(s => s.YouTubeId.Equals(song.YouTubeId))) cleanList.Add(song);
             }
             return cleanList;
         }
 
-        public static HashSet<char> GetSpecialChars(List<Song> list)
+        public static HashSet<char> GetSpecialChars(List<WikipediaSong> list)
         {
             HashSet<char> charList = new HashSet<char>();
-            foreach (Song song in list)
+            foreach (WikipediaSong song in list)
             {
                 string artist = song.Artist;
                 foreach (char ch in artist)
@@ -92,13 +92,13 @@ namespace ClassLibrary
             return charList;
         }
 
-        public static HashSet<string> GetUnneccessaryWords(List<Song> list)
+        public static HashSet<string> GetUnneccessaryWords(List<WikipediaSong> list)
         {
             HashSet<string> wordList = new HashSet<string>();
-            foreach (Song song in list)
+            foreach (WikipediaSong song in list)
             {
                 string artist = song.Artist;
-                string[] words = artist.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                string[] words = artist.Split(" ", StringSplitOptions.RemoveEmptyEntries);
                 foreach (string word in words)
                 {
                     if (!word.MatchesRegex("^[A-Z]")) wordList.Add(word);
@@ -107,29 +107,29 @@ namespace ClassLibrary
             return wordList;
         }
 
-        public static List<Song> AddSongsFromBackslashes(List<Song> list)
+        public static List<WikipediaSong> AddSongsFromBackslashes(List<WikipediaSong> list)
         {
-            List<Song> listClone = list.CloneObject();
+            List<WikipediaSong> listClone = list.CloneObject();
             for (int i = 0; i < listClone.Count; i++)
             {
-                Song song = listClone[i];
-                string sng = song.Title;
-                string[] names = sng.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                WikipediaSong song = listClone[i];
+                string sng = song.Song;
+                string[] names = sng.Split("/", StringSplitOptions.RemoveEmptyEntries);
                 if (names.Length == 1) continue;
                 for (int j = 0; j < names.Length; j++)
                 {
                     string name = names[j];
                     if (j == 0)
                     {
-                        song.Title = name;
+                        song.Song = name;
                         continue;
                     }
-                    Song newSong = song.CloneObject();
-                    newSong.Title = name;
+                    WikipediaSong newSong = song.CloneObject();
+                    newSong.Song = name;
                     listClone.Add(newSong);
                 }
             }
-            List<Song> sortedList = listClone.OrderBy(s => s.Year).ToList();
+            List<WikipediaSong> sortedList = listClone.OrderBy(s => s.Year).ToList();
             return sortedList;
         }
     }

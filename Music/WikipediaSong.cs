@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace ClassLibrary
+namespace Music
 {
-    [DebuggerDisplay("{Artist} - {Title} - {Year}")]
-    public class Song
+    [DebuggerDisplay("{Artist} - {Song} - {Year}")]
+    public class WikipediaSong
     {
-        public Song()
+        public WikipediaSong()
         {
         }
 
-        public Song(string artist, string title, int year)
+        public WikipediaSong(string artist, string song, int year)
         {
             Artist = artist;
-            Title = title;
+            Song = song;
             Year = year;
         }
 
         public string Artist { get; set; } = "";
-        public string Title { get; set; } = "";
+        public string Song { get; set; } = "";
         public int Year { get; set; } = 0;
         public ListTypes ListType { get; set; } = ListTypes.Unknown;
         public string ListTypeName { get { return ListType.ToString(); } }
