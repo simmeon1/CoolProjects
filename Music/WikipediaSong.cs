@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Music
 {
-    [DebuggerDisplay("{Artist} - {Song} - {Year}")]
+    [DebuggerDisplay("{Artist} - {Song} - {Year} - {YouTubeViewsString}")]
     public class WikipediaSong
     {
         public WikipediaSong()

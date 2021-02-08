@@ -76,7 +76,8 @@ namespace Music
                                 .OrderByDescending(s => s.YouTubeViews)
                                 .ToList();
             //filteredList.Shuffle();
-            filteredList = await GetListPrioritisedByYearAndViewsAsync(filteredList);
+            MusicListPrioritiser mlp = new MusicListPrioritiser();
+            filteredList = await mlp.GetListPrioritisedByYearsAndViews_Async(filteredList);
 
 
             string filteredListJson = filteredList.ToJson();
@@ -90,40 +91,6 @@ namespace Music
             str.Append("]");
             string result = str.ToString();
             return result;
-        }
-
-        private static async Task<List<WikipediaSong>> GetListPrioritisedByYearAndViewsAsync(List<WikipediaSong> list)
-        {
-            List<WikipediaSong> listClone = list.CloneObject();
-
-            var p1List = listClone.Where(s => s.Year >= 1980 && s.Year <= 1989).ToList();
-            var p2List = listClone.Where(s => s.Year >= 1990 && s.Year <= 1999).ToList();
-            var p3List = listClone.Where(s => s.Year >= 1970 && s.Year <= 1979).ToList();
-            var p4List = listClone.Where(s => s.Year >= 2000 && s.Year <= 2009).ToList();
-            var p5List = listClone.Where(s => s.Year >= 2010 && s.Year <= 2019).ToList();
-            var p6List = listClone.Where(s => s.Year >= 1960 && s.Year <= 1970).ToList();
-            var p7List = listClone.Where(s => s.Year >= 2020 && s.Year <= 2021).ToList();
-            var p8List = listClone.Where(s => s.Year >= 1950 && s.Year <= 1959).ToList();
-
-            Task<List<WikipediaSong>> p1ListTask = Task.Run(() => GetListPrioritisedByViews(p1List));
-            Task<List<WikipediaSong>> p2ListTask = Task.Run(() => GetListPrioritisedByViews(p2List));
-            Task<List<WikipediaSong>> p3ListTask = Task.Run(() => GetListPrioritisedByViews(p3List));
-            Task<List<WikipediaSong>> p4ListTask = Task.Run(() => GetListPrioritisedByViews(p4List));
-            Task<List<WikipediaSong>> p5ListTask = Task.Run(() => GetListPrioritisedByViews(p5List));
-            Task<List<WikipediaSong>> p6ListTask = Task.Run(() => GetListPrioritisedByViews(p6List));
-            Task<List<WikipediaSong>> p7ListTask = Task.Run(() => GetListPrioritisedByViews(p7List));
-
-            await Task.WhenAll(new List<Task>() { p1ListTask, p2ListTask, p3ListTask, p4ListTask, p5ListTask, p6ListTask, p7ListTask });
-
-            p1List = p1ListTask.Result;
-            p2List = p2ListTask.Result;
-            p3List = p3ListTask.Result;
-            p4List = p4ListTask.Result;
-            p5List = p5ListTask.Result;
-            p6List = p6ListTask.Result;
-            p7List = p7ListTask.Result;
-
-            return GetPrioritisedList(p1List, p2List, p3List, p4List, p5List, p6List, p7List, p8List, pickRandomSongFromGroupedLists:false);
         }
 
         private static List<WikipediaSong> GetPrioritisedList(List<WikipediaSong> p1List, List<WikipediaSong> p2List, List<WikipediaSong> p3List, List<WikipediaSong> p4List, List<WikipediaSong> p5List, List<WikipediaSong> p6List, List<WikipediaSong> p7List, List<WikipediaSong> p8List, bool pickRandomSongFromGroupedLists)
