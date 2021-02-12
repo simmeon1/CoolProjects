@@ -9,14 +9,14 @@ namespace Music
     public class MusicListPrioritiser
     {
         private const int p0 = 0;
-        private const int p1 = 25; //25 //80-89 //1b+
-        private const int p2 = 45; //20 //90-99 //500kk-999kk
-        private const int p3 = 60; //15 //70-79 //100kk-499kk
-        private const int p4 = 75; //15 //00-09 //10kk-99kk
-        private const int p5 = 80; //15 //10-19 //1kk
-        private const int p6 = 95; //10 //60-70 // 5
-        private const int p7 = 98; //3 //20-21 //100k-499k
-        private const int p8 = 100; //2 //50-59 //99k-
+        private const int p1 = 21; //21 //80-89 //1b+
+        private const int p2 = 40; //19 //90-99 //500kk-999kk
+        private const int p3 = 57; //17 //70-79 //100kk-499kk
+        private const int p4 = 70; //13 //00-09 //10kk-99kk
+        private const int p5 = 80; //10 //10-19 //1kk
+        private const int p6 = 90; //10 //60-70 // 5
+        private const int p7 = 95; //5 //20-21 //100k-499k
+        private const int p8 = 100; //5 //50-59 //99k-
 
         public async Task<List<WikipediaSong>> GetListPrioritisedByYearsAndViews_Async(List<WikipediaSong> list)
         {
