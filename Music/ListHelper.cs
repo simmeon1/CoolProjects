@@ -5,6 +5,7 @@ using ClassLibrary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Music
 {
@@ -90,6 +91,7 @@ namespace Music
             }
             str.Append("]");
             string result = str.ToString();
+            File.WriteAllText("songsForScript.txt", result);
             return result;
         }
 
