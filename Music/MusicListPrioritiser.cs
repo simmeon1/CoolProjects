@@ -54,6 +54,18 @@ namespace Music
             return GetPrioritisedList(pickRandomSongFromLists: false, p1List, p2List, p3List, p4List, p5List, p6List, p7List, p8List);
         }
 
+        private string GetListForExcel(List<WikipediaSong> list)
+        {
+            string x = "";
+            for (int i = 0; i < list.Count; i++)
+            {
+                WikipediaSong song = list[i];
+                if (i > 0) x += Environment.NewLine;
+                x += $"{song.Artist}	{song.Song}	{song.Year}	{song.YouTubeName}	{song.YouTubeViews}	https://www.youtube.com/watch?v={song.YouTubeId}";
+            }
+            return x;
+        }
+
         private  List<WikipediaSong> GetListPrioritisedByViews(List<WikipediaSong> list)
         {
             List<WikipediaSong> listClone = list.CloneObject();
