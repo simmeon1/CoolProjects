@@ -31,6 +31,9 @@ namespace Music
             List<WikipediaSong> p7List = listClone.Where(s => s.Year >= 2020 && s.Year < 2022).ToList();
             List<WikipediaSong> p8List = listClone.Where(s => s.Year >= 1950 && s.Year < 1960).ToList();
 
+            ExcelPrinter printer = new ExcelPrinter();
+            printer.PrintList(listClone, "testt");
+
             Task<List<WikipediaSong>> p1ListTask = Task.Run(() => GetListPrioritisedByViews(p1List));
             Task<List<WikipediaSong>> p2ListTask = Task.Run(() => GetListPrioritisedByViews(p2List));
             Task<List<WikipediaSong>> p3ListTask = Task.Run(() => GetListPrioritisedByViews(p3List));
