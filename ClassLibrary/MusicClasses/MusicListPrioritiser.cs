@@ -107,12 +107,12 @@ namespace MusicClasses
             foreach (WikipediaSong song in list)
             {
                 if (song.YouTubeViews >= 1000000000) p1List.Add(song);
-                else if (song.YouTubeViews >= 500000000 && song.YouTubeViews < 1000000000) p2List.Add(song);
-                else if (song.YouTubeViews >= 100000000 && song.YouTubeViews < 500000000) p3List.Add(song);
-                else if (song.YouTubeViews >= 10000000 && song.YouTubeViews < 100000000) p4List.Add(song);
-                else if (song.YouTubeViews >= 1000000 && song.YouTubeViews < 10000000) p5List.Add(song);
-                else if (song.YouTubeViews >= 500000 && song.YouTubeViews < 1000000) p6List.Add(song);
-                else if (song.YouTubeViews >= 100000 && song.YouTubeViews < 500000) p7List.Add(song);
+                else if (song.YouTubeViews >= 500000000) p2List.Add(song);
+                else if (song.YouTubeViews >= 100000000) p3List.Add(song);
+                else if (song.YouTubeViews >= 10000000) p4List.Add(song);
+                else if (song.YouTubeViews >= 1000000) p5List.Add(song);
+                else if (song.YouTubeViews >= 500000) p6List.Add(song);
+                else if (song.YouTubeViews >= 100000) p7List.Add(song);
                 else if (song.YouTubeViews < 100000) p8List.Add(song);
             }
 

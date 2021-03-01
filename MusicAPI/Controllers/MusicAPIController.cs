@@ -28,7 +28,9 @@ namespace MusicAPI.Controllers
         public async Task<string> RefreshVideosAndGetNextVideoAsync()
         {
             List<WikipediaSong> fullList = JsonConvert.DeserializeObject<List<WikipediaSong>>(System.IO.File.ReadAllText("TopTenUKandUSSingles.json"));
-            List<WikipediaSong> prioritisedList = await ListHelper.GetListPrioritisedByViewsAndYears(fullList);
+            List<WikipediaSong> orderedList = fullList.OrderByDescending(s => s.YouTubeViews).ToList();
+            MusicListPrioritiser mlp = new MusicListPrioritiser();
+            List<WikipediaSong> prioritisedList = await mlp.GetListPrioritisedByYearsAndViews(orderedList);
             System.IO.File.WriteAllText("prioritisedList.json", prioritisedList.ToJson());
             return prioritisedList.First().YouTubeId;
         }

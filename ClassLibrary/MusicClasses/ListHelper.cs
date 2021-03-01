@@ -98,64 +98,6 @@ namespace MusicClasses
             return fullList.OrderByDescending(s => s.YouTubeViews).ToList();
         }
 
-        private static List<WikipediaSong> GetPrioritisedList(List<WikipediaSong> p1List, List<WikipediaSong> p2List, List<WikipediaSong> p3List, List<WikipediaSong> p4List, List<WikipediaSong> p5List, List<WikipediaSong> p6List, List<WikipediaSong> p7List, List<WikipediaSong> p8List, bool pickRandomSongFromGroupedLists)
-        {
-            var p0 = 0;
-            var p1 = 25; //25 //80-89
-            var p2 = 45; //20 //90-99
-            var p3 = 60; //15 //70-79
-            var p4 = 75; //15 //00-09
-            var p5 = 90; //15 //10-19
-            var p6 = 95; //5 //60-70
-            var p7 = 98; //3 //20-21
-            var p8 = 100; //2 //50-59
-
-            Dictionary<int, List<WikipediaSong>> dict = new Dictionary<int, List<WikipediaSong>>();
-            dict.Add(p1, p1List);
-            dict.Add(p2, p2List);
-            dict.Add(p3, p3List);
-            dict.Add(p4, p4List);
-            dict.Add(p5, p5List);
-            dict.Add(p6, p6List);
-            dict.Add(p7, p7List);
-            dict.Add(p8, p8List);
-
-            List<WikipediaSong> shuffledList = new List<WikipediaSong>();
-            while (dict.ToJson().MatchesRegex("\"Artist\":")) PickRandomSongsFromPrioritisedLists(p0, p1, p2, p3, p4, p5, p6, p7, p8, dict, shuffledList, pickRandomSongFromGroupedLists);
-            return shuffledList;
-        }
-
-        private static List<WikipediaSong> GetListPrioritisedByViews(List<WikipediaSong> list)
-        {
-            List<WikipediaSong> listClone = list.CloneObject();
-            return GetPrioritisedList(listClone.Where(s => s.YouTubeViews >= 1000000000).ToList(),
-                                        listClone.Where(s => s.YouTubeViews >= 500000000 && s.YouTubeViews <= 999999999).ToList(),
-                                        listClone.Where(s => s.YouTubeViews >= 100000000 && s.YouTubeViews <= 499999999).ToList(),
-                                        listClone.Where(s => s.YouTubeViews >= 10000000 && s.YouTubeViews <= 99999999).ToList(),
-                                        listClone.Where(s => s.YouTubeViews >= 1000000 && s.YouTubeViews <= 9999999).ToList(),
-                                        listClone.Where(s => s.YouTubeViews >= 500000 && s.YouTubeViews <= 999999).ToList(),
-                                        listClone.Where(s => s.YouTubeViews >= 100000 && s.YouTubeViews <= 499999).ToList(),
-                                        listClone.Where(s => s.YouTubeViews <= 99999).ToList(), pickRandomSongFromGroupedLists: true);
-        }
-
-        private static void PickRandomSongsFromPrioritisedLists(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8, Dictionary<int, List<WikipediaSong>> dict, List<WikipediaSong> shuffledList, bool pickRandomSongFromGroupedLists)
-        {
-            List<WikipediaSong> listToPickFrom = null;
-            int randomNumber = new Random().Next(0, 101);
-            if (randomNumber >= p0 && randomNumber <= p1) listToPickFrom = dict[p1];
-            else if (randomNumber >= p1 && randomNumber <= p2) listToPickFrom = dict[p2];
-            else if (randomNumber >= p2 && randomNumber <= p3) listToPickFrom = dict[p3];
-            else if (randomNumber >= p3 && randomNumber <= p4) listToPickFrom = dict[p4];
-            else if (randomNumber >= p4 && randomNumber <= p5) listToPickFrom = dict[p5];
-            else if (randomNumber >= p5 && randomNumber <= p6) listToPickFrom = dict[p6];
-            else if (randomNumber >= p6 && randomNumber <= p7) listToPickFrom = dict[p7];
-            else if (randomNumber >= p7 && randomNumber <= p8) listToPickFrom = dict[p8];
-            if (listToPickFrom.Count == 0) listToPickFrom = dict.FirstOrDefault(e => e.Value.Count > 0).Value;
-            int randomIndex = pickRandomSongFromGroupedLists ? new Random().Next(0, listToPickFrom.Count) : 0;
-            shuffledList.Add(listToPickFrom[randomIndex]);
-            listToPickFrom.RemoveAt(randomIndex);
-        }
-
         internal static List<WikipediaSong> RemoveYouTubeDuplicates(List<WikipediaSong> fullList)
         {
             List<WikipediaSong> orderedList = fullList.OrderBy(s => s.Year).ThenBy(s => s.Artist).ThenBy(s => s.Song).ToList();
