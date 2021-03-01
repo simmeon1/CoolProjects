@@ -1,4 +1,5 @@
 ﻿using Music;
+using MusicClasses;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,6 @@ public class ExcelPrinter
 
     public void PrintList(List<WikipediaSong> songList, string worksheetName)
     {
-        //x += $"{song.Artist}	{song.Song}	{song.Year}	{song.YouTubeName}	{song.YouTubeViews}	https://www.youtube.com/watch?v={song.YouTubeId}";
         DataTable table = new DataTable(worksheetName);
         table.Columns.Add(GetColumnForSongProperty(nameof(WikipediaSong.Artist)));
         table.Columns.Add(GetColumnForSongProperty(nameof(WikipediaSong.Song)));

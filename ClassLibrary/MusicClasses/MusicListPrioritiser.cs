@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClassLibrary;
 
-namespace Music
+namespace MusicClasses
 {
     public class MusicListPrioritiser
     {
@@ -18,7 +18,7 @@ namespace Music
         private const int p7 = 95; //5 //20-21 //100k-499k
         private const int p8 = 100; //5 //50-59 //99k-
 
-        public async Task<List<WikipediaSong>> GetListPrioritisedByYearsAndViews_Async(List<WikipediaSong> list)
+        public async Task<List<WikipediaSong>> GetListPrioritisedByYearsAndViews(List<WikipediaSong> list)
         {
             List<WikipediaSong> listClone = list.CloneObject();
 
@@ -31,8 +31,8 @@ namespace Music
             List<WikipediaSong> p7List = listClone.Where(s => s.Year >= 2020 && s.Year < 2022).ToList();
             List<WikipediaSong> p8List = listClone.Where(s => s.Year >= 1950 && s.Year < 1960).ToList();
 
-            ExcelPrinter printer = new ExcelPrinter();
-            printer.PrintList(listClone, "testt");
+            //ExcelPrinter printer = new ExcelPrinter();
+            //printer.PrintList(listClone, "testt");
 
             Task<List<WikipediaSong>> p1ListTask = Task.Run(() => GetListPrioritisedByViews(p1List));
             Task<List<WikipediaSong>> p2ListTask = Task.Run(() => GetListPrioritisedByViews(p2List));

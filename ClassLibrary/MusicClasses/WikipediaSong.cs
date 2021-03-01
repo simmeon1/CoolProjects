@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Music
+namespace MusicClasses
 {
     [DebuggerDisplay("{Artist} - {Song} - {Year} - {YouTubeViewsString}")]
     public class WikipediaSong

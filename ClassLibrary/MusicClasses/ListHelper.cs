@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace Music
+namespace MusicClasses
 {
     public static class ListHelper
     {
@@ -70,21 +70,10 @@ namespace Music
 
         public static async Task<string> GetYouTubeVideosArrayAsync(List<WikipediaSong> fullList)
         {
-            List<WikipediaSong> filteredList = fullList
-                                //.Where(s =>
-                                //s.Year >= 1970
-                                //&& s.Year <= 2000)
-                                .OrderByDescending(s => s.YouTubeViews)
-                                .ToList();
-            //filteredList.Shuffle();
-            MusicListPrioritiser mlp = new MusicListPrioritiser();
-            filteredList = await mlp.GetListPrioritisedByYearsAndViews_Async(filteredList);
-
-
-            string filteredListJson = filteredList.ToJson();
-
+            List<WikipediaSong> prioritisedList = await GetListPrioritisedByViewsAndYears(fullList);
+            
             StringBuilder str = new StringBuilder("[");
-            foreach (WikipediaSong song in filteredList)
+            foreach (WikipediaSong song in prioritisedList)
             {
                 if (str.Length > 1) str.Append(", ");
                 str.Append($"'{song.YouTubeId}'");
@@ -93,6 +82,20 @@ namespace Music
             string result = str.ToString();
             File.WriteAllText("songsForScript.txt", result);
             return result;
+        }
+
+        public static async Task<List<WikipediaSong>> GetListPrioritisedByViewsAndYears(List<WikipediaSong> fullList)
+        {
+            List<WikipediaSong> orderedList = OrderListByViewsDescending(fullList);
+            //string orderedListJson = orderedList.ToJson();
+            MusicListPrioritiser mlp = new MusicListPrioritiser();
+            orderedList = await mlp.GetListPrioritisedByYearsAndViews(orderedList);
+            return orderedList;
+        }
+
+        private static List<WikipediaSong> OrderListByViewsDescending(List<WikipediaSong> fullList)
+        {
+            return fullList.OrderByDescending(s => s.YouTubeViews).ToList();
         }
 
         private static List<WikipediaSong> GetPrioritisedList(List<WikipediaSong> p1List, List<WikipediaSong> p2List, List<WikipediaSong> p3List, List<WikipediaSong> p4List, List<WikipediaSong> p5List, List<WikipediaSong> p6List, List<WikipediaSong> p7List, List<WikipediaSong> p8List, bool pickRandomSongFromGroupedLists)
@@ -164,60 +167,60 @@ namespace Music
             return cleanList;
         }
 
-        public static HashSet<char> GetSpecialChars(List<WikipediaSong> list)
-        {
-            HashSet<char> charList = new HashSet<char>();
-            foreach (WikipediaSong song in list)
-            {
-                string artist = song.Artist;
-                foreach (char ch in artist)
-                {
-                    if (Convert.ToString(ch).MatchesRegex("\\w") || Convert.ToString(ch).MatchesRegex("[0-9]")) continue;
-                    charList.Add(ch);
-                }
-            }
-            return charList;
-        }
+        //public static HashSet<char> GetSpecialChars(List<WikipediaSong> list)
+        //{
+        //    HashSet<char> charList = new HashSet<char>();
+        //    foreach (WikipediaSong song in list)
+        //    {
+        //        string artist = song.Artist;
+        //        foreach (char ch in artist)
+        //        {
+        //            if (Convert.ToString(ch).MatchesRegex("\\w") || Convert.ToString(ch).MatchesRegex("[0-9]")) continue;
+        //            charList.Add(ch);
+        //        }
+        //    }
+        //    return charList;
+        //}
 
-        public static HashSet<string> GetUnneccessaryWords(List<WikipediaSong> list)
-        {
-            HashSet<string> wordList = new HashSet<string>();
-            foreach (WikipediaSong song in list)
-            {
-                string artist = song.Artist;
-                string[] words = artist.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                foreach (string word in words)
-                {
-                    if (!word.MatchesRegex("^[A-Z]")) wordList.Add(word);
-                }
-            }
-            return wordList;
-        }
+        //public static HashSet<string> GetUnneccessaryWords(List<WikipediaSong> list)
+        //{
+        //    HashSet<string> wordList = new HashSet<string>();
+        //    foreach (WikipediaSong song in list)
+        //    {
+        //        string artist = song.Artist;
+        //        string[] words = artist.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        //        foreach (string word in words)
+        //        {
+        //            if (!word.MatchesRegex("^[A-Z]")) wordList.Add(word);
+        //        }
+        //    }
+        //    return wordList;
+        //}
 
-        public static List<WikipediaSong> AddSongsFromBackslashes(List<WikipediaSong> list)
-        {
-            List<WikipediaSong> listClone = list.CloneObject();
-            for (int i = 0; i < listClone.Count; i++)
-            {
-                WikipediaSong song = listClone[i];
-                string sng = song.Song;
-                string[] names = sng.Split("/", StringSplitOptions.RemoveEmptyEntries);
-                if (names.Length == 1) continue;
-                for (int j = 0; j < names.Length; j++)
-                {
-                    string name = names[j];
-                    if (j == 0)
-                    {
-                        song.Song = name;
-                        continue;
-                    }
-                    WikipediaSong newSong = song.CloneObject();
-                    newSong.Song = name;
-                    listClone.Add(newSong);
-                }
-            }
-            List<WikipediaSong> sortedList = listClone.OrderBy(s => s.Year).ToList();
-            return sortedList;
-        }
+        //public static List<WikipediaSong> AddSongsFromBackslashes(List<WikipediaSong> list)
+        //{
+        //    List<WikipediaSong> listClone = list.CloneObject();
+        //    for (int i = 0; i < listClone.Count; i++)
+        //    {
+        //        WikipediaSong song = listClone[i];
+        //        string sng = song.Song;
+        //        string[] names = sng.Split("/", StringSplitOptions.RemoveEmptyEntries);
+        //        if (names.Length == 1) continue;
+        //        for (int j = 0; j < names.Length; j++)
+        //        {
+        //            string name = names[j];
+        //            if (j == 0)
+        //            {
+        //                song.Song = name;
+        //                continue;
+        //            }
+        //            WikipediaSong newSong = song.CloneObject();
+        //            newSong.Song = name;
+        //            listClone.Add(newSong);
+        //        }
+        //    }
+        //    List<WikipediaSong> sortedList = listClone.OrderBy(s => s.Year).ToList();
+        //    return sortedList;
+        //}
     }
 }

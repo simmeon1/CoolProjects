@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Music
+namespace MusicClasses
 {
     public enum ListTypes
     {
@@ -16,14 +16,17 @@ namespace Music
 
     public static class JsonHelper
     {
-        public static Dictionary<ListTypes, string> ListTypesAndJsonNames = new Dictionary<ListTypes, string>(
-            new List<KeyValuePair<ListTypes, string>>() {
-                new KeyValuePair<ListTypes, string>(ListTypes.Unknown, ListTypes.Unknown.ToString()),
-                new KeyValuePair<ListTypes, string>(ListTypes.TopTenUKSingles, ListTypes.TopTenUKSingles.ToString()),
-                new KeyValuePair<ListTypes, string>(ListTypes.TopTenUSSingles, ListTypes.TopTenUSSingles.ToString()),
-                new KeyValuePair<ListTypes, string>(ListTypes.TopTenUKandUSSingles, ListTypes.TopTenUKandUSSingles.ToString()),
-            }
-        );
+        public static Dictionary<ListTypes, string> ListTypesAndJsonNames = GetListTypesAndJsonNames();
+
+        private static Dictionary<ListTypes, string> GetListTypesAndJsonNames()
+        {
+            Dictionary<ListTypes, string> dict = new Dictionary<ListTypes, string>();
+            dict.Add(ListTypes.Unknown, ListTypes.Unknown.ToString());
+            dict.Add(ListTypes.TopTenUKSingles, ListTypes.TopTenUKSingles.ToString());
+            dict.Add(ListTypes.TopTenUSSingles, ListTypes.TopTenUSSingles.ToString());
+            dict.Add(ListTypes.TopTenUKandUSSingles, ListTypes.TopTenUKandUSSingles.ToString());
+            return dict;
+        }
 
         public static Dictionary<int, List<WikipediaSong>> ReadJsonFile_Dict(ListTypes listType)
         {
