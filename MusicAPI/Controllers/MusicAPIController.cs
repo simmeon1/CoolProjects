@@ -13,12 +13,12 @@ namespace MusicAPI.Controllers
 {
     [ApiController]
     [Route("MusicAPI")]
-    public class MusciAPIController : ControllerBase
+    public class MusicAPIController : ControllerBase
     {
 
-        private readonly ILogger<MusciAPIController> _logger;
+        private readonly ILogger<MusicAPIController> _logger;
 
-        public MusciAPIController(ILogger<MusciAPIController> logger)
+        public MusicAPIController(ILogger<MusicAPIController> logger)
         {
             _logger = logger;
         }
