@@ -11,7 +11,12 @@ namespace Music
         public static async Task Main(string[] args)
         {
 
-            //Dictionary<int, List<WikipediaSong>> ukSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_UK();
+            ChromeWorker_Music chrome = new ChromeWorker_Music();
+            Dictionary<int, List<WikipediaSong>> ukSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_UK();
+            List<WikipediaSong> list = ukSongs.First().Value;
+            await chrome.UpdateSongsWithYouTubeData(list);
+            var x = 1;
+
             //ListHelper.AddListTypePropertyToList(ukSongs, ListTypes.TopTenUKSingles).ToJson().WriteJsonFile(ListTypes.TopTenUKSingles);
 
             //Dictionary<int, List<WikipediaSong>> usSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_US();
@@ -22,7 +27,6 @@ namespace Music
 
             //ListHelper.CombineLists(ukSongs, usSongs).ToJson().WriteJsonFile(ListTypes.TopTenUKandUSSingles);
 
-            List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
             //List<WikipediaSong> badList = ListHelper.GetListOfSongsWithBadArtistNames(fullList);
             //var bsdfsdf = badList.ToJson();
             //var x = 1;
@@ -30,7 +34,6 @@ namespace Music
             //var x = ListHelper.GetUnneccessaryWords(fullList).ToJson();
             //var x = ListHelper.AddSongsFromBackslashes(fullList);
 
-            //ChromeWorker_Music chrome = new ChromeWorker_Music();
 
             //try
             //{
@@ -45,7 +48,8 @@ namespace Music
             //List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
             //var bsdfsdf = removedYouTubeDuplicates.ToJson();
 
-            string x = await ListHelper.GetYouTubeVideosArrayAsync(fullList);
+            //List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
+            //string x = await ListHelper.GetYouTubeVideosArrayAsync(fullList);
         }
     }
 }
