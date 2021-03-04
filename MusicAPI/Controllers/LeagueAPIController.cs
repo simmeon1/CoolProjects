@@ -24,7 +24,7 @@ namespace CoolProjectsAPI.Controllers
             if (localVars != null) return "Data already being collected.";
 
             DataCollector dataCollector = new DataCollector(apiKey);
-            await dataCollector.CollectMatchesData(maxCountOfGames: 50);
+            await dataCollector.CollectMatchesData(maxCountOfGames: 50000);
             return $"Data collection finished! Collected {dataCollector.Matches.Count} matches.";
         }
 
