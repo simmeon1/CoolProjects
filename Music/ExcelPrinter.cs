@@ -1,4 +1,5 @@
-﻿using Music;
+﻿using ClassLibrary.Shared;
+using Music;
 using MusicClasses;
 using OfficeOpenXml;
 using System;
@@ -7,17 +8,11 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using ClassLibrary;
 
-public class ExcelPrinter
+public class ExcelPrinter : ExcelPrinterBase
 {
-    private ExcelPackage Package { get; set; }
-    private ExcelWorksheet Worksheet { get; set; }
-
-    public ExcelPrinter()
-    {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-    }
-
+    
     public void PrintList(List<WikipediaSong> songList, string worksheetName)
     {
         DataTable table = new DataTable(worksheetName);
@@ -44,7 +39,7 @@ public class ExcelPrinter
         using (Package = new ExcelPackage())
         {
             AddTableToWorksheet(table);
-            Package.SaveAs(new FileInfo($@"Music_{GetDateTimeNowStringForFileName()}.xlsx"));
+            Package.SaveAs(new FileInfo($@"Music_{Extensions.GetDateTimeNowStringForFileName()}.xlsx"));
         }
 
     }
@@ -52,25 +47,6 @@ public class ExcelPrinter
     private static DataColumn GetColumnForSongProperty(string songProperty)
     {
         return new DataColumn(songProperty, typeof(WikipediaSong).GetProperty(songProperty).PropertyType);
-    }
-
-    //public bool PrintStatsTables(IEnumerable<DataTable> statTables, string descriptor = null)
-    //{
-    //    descriptor = descriptor == null ? "All" : descriptor;
-    //    using (Package = new ExcelPackage())
-    //    {
-    //        foreach (DataTable statTable in statTables) AddTableToWorksheet(statTable);
-    //        Package.SaveAs(new FileInfo($@"{Globals.ResultsPath}Stats{descriptor}_{GetDateTimeNowStringForFileName()}.xlsx"));
-    //    }
-    //    return true;
-    //}
-
-    public static string GetDateTimeNowStringForFileName()
-    {
-        DateTime dateTimeNow = DateTime.Now;
-        string dateTimeNowStr = dateTimeNow.ToString("s", CultureInfo.CreateSpecificCulture("en-US"));
-        dateTimeNowStr = dateTimeNowStr.Replace(':', '-');
-        return dateTimeNowStr;
     }
 
     private void AddTableToWorksheet(DataTable table)

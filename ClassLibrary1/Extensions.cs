@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,6 +9,8 @@ namespace ClassLibrary
 {
     public static class Extensions
     {
+        public static string ResultsPath = @"D:\LeagueAPI_Results\";
+
         public static string ToJson(this object obj, Formatting formatting = Formatting.Indented)
         {
             try
@@ -63,6 +66,14 @@ namespace ClassLibrary
                 list[k] = list[n];
                 list[n] = value;
             }
+        }
+
+        public static string GetDateTimeNowStringForFileName()
+        {
+            DateTime dateTimeNow = DateTime.Now;
+            string dateTimeNowStr = dateTimeNow.ToString("s", CultureInfo.CreateSpecificCulture("en-US"));
+            dateTimeNowStr = dateTimeNowStr.Replace(':', '-');
+            return dateTimeNowStr;
         }
     }
 }

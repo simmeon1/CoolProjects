@@ -1,40 +1,26 @@
-﻿using OfficeOpenXml;
+﻿using ClassLibrary.Shared;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using ClassLibrary;
 
 namespace LeagueAPI_Classes
 {
-    public class StatsTableToExcelPrinter
+    public class StatsTableToExcelPrinter : ExcelPrinterBase
     {
-        private ExcelPackage Package { get; set; }
-        private ExcelWorksheet Worksheet { get; set; }
-
-        public StatsTableToExcelPrinter()
-        {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        }
-
         public bool PrintStatsTables(IEnumerable<DataTable> statTables, string descriptor = null)
         {
             descriptor = descriptor == null ? "All" : descriptor;
             using (Package = new ExcelPackage())
             {
                 foreach (DataTable statTable in statTables) AddTableToWorksheet(statTable);
-                Package.SaveAs(new FileInfo($@"{Globals.ResultsPath}Stats{descriptor}_{GetDateTimeNowStringForFileName()}.xlsx"));
+                Package.SaveAs(new FileInfo($@"{Extensions.ResultsPath}Stats{descriptor}_{Extensions.GetDateTimeNowStringForFileName()}.xlsx"));
             }
             return true;
-        }
-
-        public static string GetDateTimeNowStringForFileName()
-        {
-            DateTime dateTimeNow = DateTime.Now;
-            string dateTimeNowStr = dateTimeNow.ToString("s", CultureInfo.CreateSpecificCulture("en-US"));
-            dateTimeNowStr = dateTimeNowStr.Replace(':', '-');
-            return dateTimeNowStr;
         }
 
         private void AddTableToWorksheet(DataTable statsTable)

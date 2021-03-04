@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ClassLibrary;
 
 namespace LeagueAPI_Classes
 {
     public static class Globals
     {
-        public const string ResultsPath = @"D:\LeagueAPI_Results\";
+        //public const string ResultsPath = @"D:\LeagueAPI_Results\";
         public static MapCollection MapCollection = File.ReadAllText("map.json").ToObject<MapCollection>();
         public static ItemCollection ItemCollection = File.ReadAllText("item.json").ToObject<ItemCollection>();
         public static RuneCollection RuneCollection = File.ReadAllText("runesReforged.json").ToObject<RuneCollection>();
