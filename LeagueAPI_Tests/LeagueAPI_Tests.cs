@@ -15,7 +15,6 @@ namespace LeagueAPI_Tests
     public class LeagueAPI_Tests
     {
         LeagueAPIClient leagueAPIClient;
-        private const string personalAccountId = "WYk31nhuQxim55lVmvt8gJszhyAJ5WOKQ-1ka8u_CmuTeg";
 
         [TestInitialize]
         public void Initialize()
@@ -26,7 +25,7 @@ namespace LeagueAPI_Tests
         [TestMethod]
         public async Task GetMatches_Recursive_Test()
         {
-            DataCollector dataCollector = new DataCollector(leagueAPIClient, personalAccountId);
+            DataCollector dataCollector = new DataCollector(leagueAPIClient);
             await dataCollector.CollectMatchesData(maxCountOfGames: 50000);
         }
 

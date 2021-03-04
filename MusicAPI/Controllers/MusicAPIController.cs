@@ -9,19 +9,13 @@ using System.Threading.Tasks;
 using ClassLibrary;
 using MusicClasses;
 
-namespace MusicAPI.Controllers
+namespace CoolProjectsAPI.Controllers
 {
     [ApiController]
     [Route("MusicAPI")]
-    public class MusicAPIController : ControllerBase
+    public class MusicAPIController : CommonBaseController
     {
-
-        private readonly ILogger<MusicAPIController> _logger;
-
-        public MusicAPIController(ILogger<MusicAPIController> logger)
-        {
-            _logger = logger;
-        }
+        public MusicAPIController(ILogger<MusicAPIController> logger) : base(logger) { }
 
         [HttpGet]
         [Route("RefreshVideosAndGetNextVideo")]

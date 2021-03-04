@@ -9,6 +9,7 @@ namespace LeagueAPI_Classes
 {
     public static class Globals
     {
+        public const string PersonalAccountId = "WYk31nhuQxim55lVmvt8gJszhyAJ5WOKQ-1ka8u_CmuTeg";
         public const string ResultsPath = @"D:\LeagueAPI_Results\";
         public static MapCollection MapCollection = File.ReadAllText("map.json").ToObject<MapCollection>();
         public static ItemCollection ItemCollection = File.ReadAllText("item.json").ToObject<ItemCollection>();

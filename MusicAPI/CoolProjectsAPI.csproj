@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary\ClassLibrary.csproj" />
+    <ProjectReference Include="..\LeagueAPI_Tests\LeagueAPI_Tests.csproj" />
     <ProjectReference Include="..\Music\Music.csproj" />
   </ItemGroup>
 
