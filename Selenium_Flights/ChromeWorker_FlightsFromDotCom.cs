@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using ClassLibrary.SeleniumClasses;
 
 namespace Selenium_Flights
 {

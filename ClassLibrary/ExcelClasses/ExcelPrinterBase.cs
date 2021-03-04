@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace ClassLibrary.Shared
+namespace ClassLibrary
 {
     public class ExcelPrinterBase
     {

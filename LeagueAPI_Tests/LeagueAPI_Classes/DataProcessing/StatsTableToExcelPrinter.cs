@@ -1,4 +1,4 @@
-﻿using ClassLibrary.Shared;
+﻿using ClassLibrary;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace LeagueAPI_Classes
             using (Package = new ExcelPackage())
             {
                 foreach (DataTable statTable in statTables) AddTableToWorksheet(statTable);
-                Package.SaveAs(new FileInfo($@"{Extensions.ResultsPath}Stats{descriptor}_{Extensions.GetDateTimeNowStringForFileName()}.xlsx"));
+                Package.SaveAs(new FileInfo($@"{Globals.ResultsPath}Stats{descriptor}_{ExtensionsAndStaticFunctions.GetDateTimeNowStringForFileName()}.xlsx"));
             }
             return true;
         }

@@ -7,10 +7,8 @@ using System.Text.RegularExpressions;
 
 namespace ClassLibrary
 {
-    public static class Extensions
+    public static class ExtensionsAndStaticFunctions
     {
-        public static string ResultsPath = @"D:\LeagueAPI_Results\";
-
         public static string ToJson(this object obj, Formatting formatting = Formatting.Indented)
         {
             try

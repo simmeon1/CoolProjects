@@ -1,14 +1,11 @@
-﻿using ClassLibrary.Shared;
-using Music;
+﻿using ClassLibrary;
 using MusicClasses;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using ClassLibrary;
 
 public class ExcelPrinter : ExcelPrinterBase
 {
@@ -39,7 +36,7 @@ public class ExcelPrinter : ExcelPrinterBase
         using (Package = new ExcelPackage())
         {
             AddTableToWorksheet(table);
-            Package.SaveAs(new FileInfo($@"Music_{Extensions.GetDateTimeNowStringForFileName()}.xlsx"));
+            Package.SaveAs(new FileInfo($@"Music_{ExtensionsAndStaticFunctions.GetDateTimeNowStringForFileName()}.xlsx"));
         }
 
     }
