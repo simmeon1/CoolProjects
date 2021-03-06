@@ -23,7 +23,7 @@ namespace CoolProjectsAPI.Controllers
             LeagueAPI_Variables localVars = await ReadLocalVarsFile();
             if (localVars != null) return "Data already being collected.";
 
-            DataCollector dataCollector = new DataCollector(apiKey);
+            LeagueAPI_DataCollector dataCollector = new LeagueAPI_DataCollector(apiKey);
             await dataCollector.CollectMatchesData(maxCountOfGames: 50000);
             return $"Data collection finished! Collected {dataCollector.Matches.Count} matches.";
         }
@@ -61,12 +61,12 @@ namespace CoolProjectsAPI.Controllers
 
         private static async Task<LeagueAPI_Variables> ReadLocalVarsFile()
         {
-            return await DataCollector.ReadLocalVarsFile();
+            return await LeagueAPI_DataCollector.ReadLocalVarsFile();
         }
 
         private static async Task UpdateLocalVarsFile(LeagueAPI_Variables localVars)
         {
-            await DataCollector.UpdateLocalVarsFile(localVars);
+            await LeagueAPI_DataCollector.UpdateLocalVarsFile(localVars);
         }
     }
 }

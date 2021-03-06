@@ -10,7 +10,7 @@ using ClassLibrary;
 
 namespace LeagueAPI_Classes
 {
-    public class DataCollector
+    public class LeagueAPI_DataCollector
     {
         private string PersonalAccountId = Globals.PersonalAccountId;
 
@@ -20,16 +20,15 @@ namespace LeagueAPI_Classes
         private HashSet<string> ScannedAccountIds { get; set; }
         private string LatestGameVersion { get; set; }
         private int? LastQueue { get; set; }
-        public LeagueAPI_Variables APIVars { get; private set; }
 
         private const string varsFile = LeagueAPI_Variables.varsFile;
 
-        public DataCollector(string apiKey)
+        public LeagueAPI_DataCollector(string apiKey)
         {
             this.LeagueAPIClient = new LeagueAPIClient(apiKey);
         }
 
-        public DataCollector(LeagueAPIClient leagueAPIClient)
+        public LeagueAPI_DataCollector(LeagueAPIClient leagueAPIClient)
         {
             this.LeagueAPIClient = leagueAPIClient;
         }
@@ -42,9 +41,9 @@ namespace LeagueAPI_Classes
         /// <returns></returns>
         public async Task CollectMatchesData(int maxCountOfGames)
         {
-            APIVars = new LeagueAPI_Variables();
-            APIVars.InitialiseForCollectingData();
-            await UpdateLocalVarsFile(APIVars);
+            LeagueAPI_Variables apiVars = new LeagueAPI_Variables();
+            apiVars.InitialiseForCollectingData();
+            await UpdateLocalVarsFile(apiVars);
             Matches = new HashSet<MatchDto>();
             ScannedGameIds = new HashSet<long>();
             ScannedAccountIds = new HashSet<string>();
@@ -59,7 +58,7 @@ namespace LeagueAPI_Classes
             finally
             {
                 WriteFiles(Matches);
-                APIVars.DataCollectionFinished();
+                apiVars.DataCollectionFinished();
                 File.Delete(varsFile);
             }
         }
@@ -107,9 +106,14 @@ namespace LeagueAPI_Classes
                 if (string.IsNullOrEmpty(LatestGameVersion)) LatestGameVersion = match.gameVersion;
                 if (!match.gameVersion.Contains(LatestGameVersion)) break;
                 Matches.Add(match);
+
+                //Record progress
                 Debug.WriteLine(Matches.Count);
-                APIVars.CurrentProgress = $"{Matches.Count} out of {maxCountOfGames} ({((decimal)Matches.Count / (decimal)maxCountOfGames) * 100}%)";
-                await UpdateLocalVarsFile(APIVars);
+                LeagueAPI_Variables apiVars = await ReadLocalVarsFile();
+                string currentProgress = $"{Matches.Count} out of {maxCountOfGames} ({((decimal)Matches.Count / (decimal)maxCountOfGames) * 100}%)";
+                apiVars.CurrentProgress = currentProgress;
+                await UpdateLocalVarsFile(apiVars);
+
                 if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
                 foreach (ParticipantIdentityDto identity in match.participantIdentities) participantIdentities.Add(identity);
             }

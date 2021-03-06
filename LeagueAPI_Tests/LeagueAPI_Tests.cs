@@ -25,7 +25,7 @@ namespace LeagueAPI_Tests
         [TestMethod]
         public async Task GetMatches_Recursive_Test()
         {
-            DataCollector dataCollector = new DataCollector(leagueAPIClient);
+            LeagueAPI_DataCollector dataCollector = new LeagueAPI_DataCollector(leagueAPIClient);
             await dataCollector.CollectMatchesData(maxCountOfGames: 50000);
         }
 
