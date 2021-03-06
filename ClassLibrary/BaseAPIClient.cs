@@ -17,13 +17,12 @@ namespace ClassLibrary
             Client = new HttpClient();
         }
 
-        protected async Task<string> GetResponse(HttpMethod method, string url, string authHeaderName, string authHeaderValue, StringContent requestContent = null)
+        protected async Task<HttpResponseMessage> GetResponse(HttpMethod method, string url, string authHeaderName, string authHeaderValue, StringContent requestContent)
         {
             HttpRequestMessage request = new HttpRequestMessage(method: method, requestUri: url);
             request.Headers.Add(authHeaderName, authHeaderValue);
             if (requestContent != null) request.Content = requestContent;
             HttpResponseMessage response = await Client.SendAsync(request);
-            if (response.StatusCode == (HttpStatusCode)403) throw new Exception("Authorization is invalid.");
             while (response.StatusCode == (HttpStatusCode)429)
             {
                 RetryConditionHeaderValue retryAfter = response.Headers.RetryAfter;
@@ -33,7 +32,7 @@ namespace ClassLibrary
                 if (requestContent != null) request.Content = requestContent;
                 response = await Client.SendAsync(request);
             }
-            return await response.Content.ReadAsStringAsync();
+            return response;
         }
     }
 }

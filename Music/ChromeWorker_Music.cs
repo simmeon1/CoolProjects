@@ -69,7 +69,7 @@ namespace Music
                 IWebElement input = GetElementsWithCSSSelector("input#search").First();
                 input.Click();
                 input.Clear();
-                input.SendKeys($"{song.Artist} {song.Song}");
+                input.SendKeys(song.GetArtistAndSongForYouTubeSearch());
                 IWebElement searchButton = GetElementsWithCSSSelector("#search-icon-legacy").First();
                 searchButton.Click();
                 await Task.Delay(2500);

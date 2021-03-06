@@ -31,13 +31,20 @@ namespace LeagueAPI_Classes
 
         private async Task<T> GetObject<T>(string url)
         {
-            string response = await GetResponse(
+            string response = await GetResponseContent(
                 method: HttpMethod.Get,
                 url: url,
                 authHeaderName: authHeaderName,
                 authHeaderValue: apiKey,
                 requestContent: null);
             return JsonConvert.DeserializeObject<T>(response);
+        }
+
+        protected async Task<string> GetResponseContent(HttpMethod method, string url, string authHeaderName, string authHeaderValue, StringContent requestContent = null)
+        {
+            HttpResponseMessage response = await GetResponse(method, url, authHeaderName, authHeaderValue, requestContent);
+            if (response.StatusCode == (HttpStatusCode)403) throw new Exception("Authorization is invalid.");
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

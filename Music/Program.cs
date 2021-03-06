@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Music.MusicClasses;
+using ClassLibrary;
 using MusicClasses;
 
 namespace Music
@@ -50,10 +51,17 @@ namespace Music
             //List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
             //var bsdfsdf = removedYouTubeDuplicates.ToJson();
 
-            //List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
+            List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
 
             SpotifyAPIClient spotifyAPIClient = new SpotifyAPIClient();
-            string token = await spotifyAPIClient.GetAccessToken();
+            for (int i = 0; i < fullList.Count; i++)
+            {
+                WikipediaSong song = fullList[i];
+                await spotifyAPIClient.PopulateSongWithSpotifyData(song);
+                Debug.WriteLine(i);
+            }
+            string fullListJson = fullList.ToJson();
+            var x = 1;
             //string x = await ListHelper.GetYouTubeVideosArrayAsync(fullList);
         }
     }

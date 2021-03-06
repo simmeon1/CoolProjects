@@ -11,17 +11,17 @@ namespace MusicClasses
 {
     public static class ListHelper
     {
-        public static Dictionary<int, List<WikipediaSong>> AddListTypePropertyToList(Dictionary<int, List<WikipediaSong>> list, ListTypes type)
-        {
-            foreach (KeyValuePair<int, List<WikipediaSong>> pair in list)
-            {
-                foreach (WikipediaSong song in pair.Value)
-                {
-                    song.ListType = type;
-                }
-            }
-            return list;
-        }
+        //public static Dictionary<int, List<WikipediaSong>> AddListTypePropertyToList(Dictionary<int, List<WikipediaSong>> list, ListTypes type)
+        //{
+        //    foreach (KeyValuePair<int, List<WikipediaSong>> pair in list)
+        //    {
+        //        foreach (WikipediaSong song in pair.Value)
+        //        {
+        //            song.ListType = type;
+        //        }
+        //    }
+        //    return list;
+        //}
 
         public static List<WikipediaSong> CombineLists(Dictionary<int, List<WikipediaSong>> dict1, Dictionary<int, List<WikipediaSong>> dict2)
         {
