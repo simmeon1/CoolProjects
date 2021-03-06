@@ -17,20 +17,17 @@ namespace ClassLibrary
             Client = new HttpClient();
         }
 
-        protected async Task<HttpResponseMessage> GetResponse(HttpMethod method, string url, string authHeaderName, string authHeaderValue, StringContent requestContent)
+        protected async Task<HttpResponseMessage> GetResponse(HttpRequestMessage originalRequest)
         {
-            HttpRequestMessage request = new HttpRequestMessage(method: method, requestUri: url);
-            request.Headers.Add(authHeaderName, authHeaderValue);
-            if (requestContent != null) request.Content = requestContent;
-            HttpResponseMessage response = await Client.SendAsync(request);
+            HttpResponseMessage response = await Client.SendAsync(originalRequest);
             while (response.StatusCode == (HttpStatusCode)429)
             {
                 RetryConditionHeaderValue retryAfter = response.Headers.RetryAfter;
                 await Task.Delay(retryAfter == null ? 1000 : (int)retryAfter.Delta.Value.TotalMilliseconds);
-                request = new HttpRequestMessage(method: method, requestUri: url);
-                request.Headers.Add(authHeaderName, authHeaderValue);
-                if (requestContent != null) request.Content = requestContent;
-                response = await Client.SendAsync(request);
+                HttpRequestMessage newRequest = new HttpRequestMessage(method: originalRequest.Method, requestUri: originalRequest.RequestUri);
+                foreach (KeyValuePair<string, IEnumerable<string>> header in originalRequest.Headers) newRequest.Headers.Add(header.Key, header.Value);
+                if (originalRequest.Content != null) newRequest.Content = originalRequest.Content;
+                response = await Client.SendAsync(newRequest);
             }
             return response;
         }

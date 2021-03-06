@@ -60,8 +60,8 @@ namespace Music
                 await spotifyAPIClient.PopulateSongWithSpotifyData(song);
                 Debug.WriteLine(i);
             }
-            string fullListJson = fullList.ToJson();
-            var x = 1;
+            //string fullListJson = fullList.ToJson();
+            //var x = 1;
             //string x = await ListHelper.GetYouTubeVideosArrayAsync(fullList);
         }
     }

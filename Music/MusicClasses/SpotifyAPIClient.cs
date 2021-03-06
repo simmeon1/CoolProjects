@@ -15,38 +15,47 @@ namespace MusicClasses
 {
     public class SpotifyAPIClient : BaseAPIClient
     {
-        const string authHeaderName = "Authorization";
-        const string authHeaderValue_RefreshToken = "Basic YzlkZWM2ZGVjNzcyNGU5OThiN2E0ZGVkNDk5ZjA3Y2U6MTEzNmJjNmQzNjAwNGVlY2I0MzAxYzU4Nzg5OWMyNzQ=";
-        const string refreshToken = "AQBsnhhaLPL4tEdoLoZlA19WW4MBlnZqDMwO6RvwJ7sXPOKXozTTANeMXlhelrBdC9Q8ukzHoJyDyflyq9SDap1EYczO0hKiCe4a4rDRgXfWZGx3CennNenCwFzyLJhEWs0";
+        private const string authHeaderName = "Authorization";
+        private const string authHeaderValue_RefreshToken = "Basic YzlkZWM2ZGVjNzcyNGU5OThiN2E0ZGVkNDk5ZjA3Y2U6MTEzNmJjNmQzNjAwNGVlY2I0MzAxYzU4Nzg5OWMyNzQ=";
+        private const string refreshToken = "AQBsnhhaLPL4tEdoLoZlA19WW4MBlnZqDMwO6RvwJ7sXPOKXozTTANeMXlhelrBdC9Q8ukzHoJyDyflyq9SDap1EYczO0hKiCe4a4rDRgXfWZGx3CennNenCwFzyLJhEWs0";
+        private const string TopTenAllv2PlaylistId = "46MnCmkIiVit7lBjYHHAgr";
 
-        public string AccessToken { get; set; }
+        private string AccessToken { get; set; }
 
         public SpotifyAPIClient() : base()
         {
+        }
+
+        private async Task<HttpRequestMessage> GetRequestMessagePreparedWithAuthorizationHeaders(HttpMethod method, string url, StringContent requestContent = null, bool requestIsForNewToken = false)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(method: method, requestUri: url);
+            request.Headers.Add(authHeaderName, requestIsForNewToken ? authHeaderValue_RefreshToken : await GetAccessTokenFromApiIfNeededAndReturnIt());
+            if (requestContent != null) request.Content = requestContent;
+            return request;
         }
 
         private async Task<string> GetAccessTokenFromApiIfNeededAndReturnIt(bool forceRefresh = false)
         {
             if (!forceRefresh && !AccessToken.IsNullOrEmpty()) return AccessToken;
 
-            string answer = await GetResponseContent(
+            HttpRequestMessage requestMessage = await GetRequestMessagePreparedWithAuthorizationHeaders(
                 method: HttpMethod.Post,
                 url: "https://accounts.spotify.com/api/token",
-                authHeaderName: authHeaderName,
-                authHeaderValue: authHeaderValue_RefreshToken,
-                requestContent: new StringContent($"grant_type=refresh_token&refresh_token={refreshToken}", Encoding.UTF8, "application/x-www-form-urlencoded"));
-            AccessToken = Regex.Matches(answer, "access_token.*?:\"(.*?)\"")[0].Groups[1].Value;
+                requestContent: new StringContent($"grant_type=refresh_token&refresh_token={refreshToken}", Encoding.UTF8, "application/x-www-form-urlencoded"),
+                requestIsForNewToken: true);
 
+            string answer = await GetResponseContent(requestMessage);
+            AccessToken = $"Bearer {Regex.Matches(answer, "access_token.*?:\"(.*?)\"")[0].Groups[1].Value}";
             return AccessToken;
         }
         
         public async Task PopulateSongWithSpotifyData(WikipediaSong song)
         {
-            string answer = await GetResponseContent(
+            HttpRequestMessage requestMessage = await GetRequestMessagePreparedWithAuthorizationHeaders(
                 method: HttpMethod.Get,
-                url: $"https://api.spotify.com/v1/search?q={song.GetArtistAndSongForSpotifyAPISearch()}&type=track&limit=1",
-                authHeaderName: authHeaderName,
-                authHeaderValue: $"Bearer {await GetAccessTokenFromApiIfNeededAndReturnIt()}");
+                url: $"https://api.spotify.com/v1/search?q={song.GetArtistAndSongForSpotifyAPISearch()}&type=track&limit=1");
+
+            string answer = await GetResponseContent(requestMessage);
 
             JObject jo = JObject.Parse(answer);
             bool songHasBeenFound = ((JArray)(jo["tracks"]["items"])).Count() > 0;
@@ -67,13 +76,20 @@ namespace MusicClasses
             song.SpotifyArtist = artistString;
         }
 
-        protected async Task<string> GetResponseContent(HttpMethod method, string url, string authHeaderName, string authHeaderValue, StringContent requestContent = null)
+        public async Task AddSongsToPlaylist(List<WikipediaSong> songs)
         {
-            HttpResponseMessage response = await GetResponse(method, url, authHeaderName, authHeaderValue, requestContent);
+            HttpRequestMessage requestMessage = await GetRequestMessagePreparedWithAuthorizationHeaders(
+                method: HttpMethod.Post,
+                url: $"https://api.spotify.com/v1/playlists/{TopTenAllv2PlaylistId}/tracks");
+        }
+
+            private async Task<string> GetResponseContent(HttpRequestMessage message)
+        {
+            HttpResponseMessage response = await GetResponse(message);
             if (response.StatusCode == (HttpStatusCode)401)
             {
                 await GetAccessTokenFromApiIfNeededAndReturnIt(forceRefresh: true);
-                response = await GetResponse(method, url, authHeaderName, authHeaderValue, requestContent);
+                response = await GetResponse(message);
             }
             return await response.Content.ReadAsStringAsync();
         }

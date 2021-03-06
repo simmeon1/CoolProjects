@@ -13,11 +13,11 @@ namespace LeagueAPI_Classes
     public class LeagueAPIClient : BaseAPIClient
     {
         const string authHeaderName = "X-Riot-Token";
-        private string apiKey { get; set; }
+        private string ApiKey { get; set; }
 
         public LeagueAPIClient(string apiKey) : base()
         {
-            this.apiKey = apiKey;
+            ApiKey = apiKey;
         }
 
         public async Task<MatchDto> GetMatch(long matchId)
@@ -31,20 +31,23 @@ namespace LeagueAPI_Classes
 
         private async Task<T> GetObject<T>(string url)
         {
-            string response = await GetResponseContent(
-                method: HttpMethod.Get,
-                url: url,
-                authHeaderName: authHeaderName,
-                authHeaderValue: apiKey,
-                requestContent: null);
+            HttpRequestMessage message = GetRequestMessagePreparedWithAuthorizationHeaders(HttpMethod.Get, url);
+            string response = await GetResponseContent(message);
             return JsonConvert.DeserializeObject<T>(response);
         }
 
-        protected async Task<string> GetResponseContent(HttpMethod method, string url, string authHeaderName, string authHeaderValue, StringContent requestContent = null)
+        protected async Task<string> GetResponseContent(HttpRequestMessage message)
         {
-            HttpResponseMessage response = await GetResponse(method, url, authHeaderName, authHeaderValue, requestContent);
+            HttpResponseMessage response = await GetResponse(message);
             if (response.StatusCode == (HttpStatusCode)403) throw new Exception("Authorization is invalid.");
             return await response.Content.ReadAsStringAsync();
+        }
+
+        private HttpRequestMessage GetRequestMessagePreparedWithAuthorizationHeaders(HttpMethod method, string url)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(method: method, requestUri: url);
+            request.Headers.Add(authHeaderName, ApiKey);
+            return request;
         }
     }
 }
