@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Music.MusicClasses;
 using MusicClasses;
 
 namespace Music
@@ -11,11 +13,11 @@ namespace Music
         public static async Task Main(string[] args)
         {
 
-            ChromeWorker_Music chrome = new ChromeWorker_Music();
-            Dictionary<int, List<WikipediaSong>> ukSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_UK();
-            List<WikipediaSong> list = ukSongs.First().Value;
-            await chrome.UpdateSongsWithYouTubeData(list);
-            var x = 1;
+            //ChromeWorker_Music chrome = new ChromeWorker_Music();
+            //Dictionary<int, List<WikipediaSong>> ukSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_UK();
+            //List<WikipediaSong> list = ukSongs.First().Value;
+            //await chrome.UpdateSongsWithYouTubeData(list);
+            //var x = 1;
 
             //ListHelper.AddListTypePropertyToList(ukSongs, ListTypes.TopTenUKSingles).ToJson().WriteJsonFile(ListTypes.TopTenUKSingles);
 
@@ -49,6 +51,9 @@ namespace Music
             //var bsdfsdf = removedYouTubeDuplicates.ToJson();
 
             //List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
+
+            SpotifyAPIClient spotifyAPIClient = new SpotifyAPIClient();
+            string token = await spotifyAPIClient.GetAccessToken();
             //string x = await ListHelper.GetYouTubeVideosArrayAsync(fullList);
         }
     }
