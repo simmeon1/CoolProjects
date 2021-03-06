@@ -72,7 +72,7 @@ namespace LeagueAPI_Classes
             catch (IOException)
             {
                 await Task.Delay(1000);
-                LeagueAPI_Variables.UpdateLocalVarsFile(aPIVars);
+                await UpdateLocalVarsFile(aPIVars);
             }
         }
 
@@ -85,7 +85,7 @@ namespace LeagueAPI_Classes
             catch (IOException)
             {
                 await Task.Delay(1000);
-                return LeagueAPI_Variables.ReadLocalVarsFile();
+                return await ReadLocalVarsFile();
             }
         }
 
