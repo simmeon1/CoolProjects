@@ -31,7 +31,7 @@ namespace LeagueAPI_Classes
 
         private async Task<T> GetObject<T>(string url)
         {
-            HttpRequestMessage message = GetRequestMessagePreparedWithAuthorizationHeaders(HttpMethod.Get, url);
+            HttpRequestMessage message = GetPreparedRequestMessage(HttpMethod.Get, url);
             string response = await GetResponseContent(message);
             return JsonConvert.DeserializeObject<T>(response);
         }
@@ -43,11 +43,9 @@ namespace LeagueAPI_Classes
             return await response.Content.ReadAsStringAsync();
         }
 
-        private HttpRequestMessage GetRequestMessagePreparedWithAuthorizationHeaders(HttpMethod method, string url)
+        private HttpRequestMessage GetPreparedRequestMessage(HttpMethod method, string url)
         {
-            HttpRequestMessage request = new HttpRequestMessage(method: method, requestUri: url);
-            request.Headers.Add(authHeaderName, ApiKey);
-            return request;
+            return GetRequestMessagePreparedWithAuthorizationHeaders(method, url, authHeaderName, ApiKey);
         }
     }
 }

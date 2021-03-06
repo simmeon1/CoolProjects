@@ -26,19 +26,16 @@ namespace MusicClasses
         {
         }
 
-        private async Task<HttpRequestMessage> GetRequestMessagePreparedWithAuthorizationHeaders(HttpMethod method, string url, StringContent requestContent = null, bool requestIsForNewToken = false)
+        private async Task<HttpRequestMessage> GetPreparedRequestMessage(HttpMethod method, string url, StringContent requestContent = null, bool requestIsForNewToken = false)
         {
-            HttpRequestMessage request = new HttpRequestMessage(method: method, requestUri: url);
-            request.Headers.Add(authHeaderName, requestIsForNewToken ? authHeaderValue_RefreshToken : await GetAccessTokenFromApiIfNeededAndReturnIt());
-            if (requestContent != null) request.Content = requestContent;
-            return request;
+            return GetRequestMessagePreparedWithAuthorizationHeaders(method, url, authHeaderName, requestIsForNewToken ? authHeaderValue_RefreshToken : await GetAccessTokenFromApiIfNeededAndReturnIt(), requestContent);
         }
 
         private async Task<string> GetAccessTokenFromApiIfNeededAndReturnIt(bool forceRefresh = false)
         {
             if (!forceRefresh && !AccessToken.IsNullOrEmpty()) return AccessToken;
 
-            HttpRequestMessage requestMessage = await GetRequestMessagePreparedWithAuthorizationHeaders(
+            HttpRequestMessage requestMessage = await GetPreparedRequestMessage(
                 method: HttpMethod.Post,
                 url: "https://accounts.spotify.com/api/token",
                 requestContent: new StringContent($"grant_type=refresh_token&refresh_token={refreshToken}", Encoding.UTF8, "application/x-www-form-urlencoded"),
@@ -51,7 +48,7 @@ namespace MusicClasses
         
         public async Task PopulateSongWithSpotifyData(WikipediaSong song)
         {
-            HttpRequestMessage requestMessage = await GetRequestMessagePreparedWithAuthorizationHeaders(
+            HttpRequestMessage requestMessage = await GetPreparedRequestMessage(
                 method: HttpMethod.Get,
                 url: $"https://api.spotify.com/v1/search?q={song.GetArtistAndSongForSpotifyAPISearch()}&type=track&limit=1");
 
@@ -78,7 +75,7 @@ namespace MusicClasses
 
         public async Task AddSongsToPlaylist(List<WikipediaSong> songs)
         {
-            HttpRequestMessage requestMessage = await GetRequestMessagePreparedWithAuthorizationHeaders(
+            HttpRequestMessage requestMessage = await GetPreparedRequestMessage(
                 method: HttpMethod.Post,
                 url: $"https://api.spotify.com/v1/playlists/{TopTenAllv2PlaylistId}/tracks");
         }

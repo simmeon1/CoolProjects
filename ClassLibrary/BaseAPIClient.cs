@@ -17,6 +17,14 @@ namespace ClassLibrary
             Client = new HttpClient();
         }
 
+        protected HttpRequestMessage GetRequestMessagePreparedWithAuthorizationHeaders(HttpMethod method, string url, string authHeaderName, string authHeaderValue, StringContent requestContent = null)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(method: method, requestUri: url);
+            request.Headers.Add(authHeaderName, authHeaderValue);
+            if (requestContent != null) request.Content = requestContent;
+            return request;
+        }
+
         protected async Task<HttpResponseMessage> GetResponse(HttpRequestMessage originalRequest)
         {
             HttpResponseMessage response = await Client.SendAsync(originalRequest);
