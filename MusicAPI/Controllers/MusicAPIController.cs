@@ -33,7 +33,7 @@ namespace CoolProjectsAPI.Controllers
         [Route("GetNextVideo")]
         public string GetNextVideo(string currentVideo)
         {
-            List<WikipediaSong> songList = JsonConvert.DeserializeObject<List<WikipediaSong>>(System.IO.File.ReadAllText("prioritisedList.json"));
+            List<WikipediaSong> songList = ReadPrioritisedList();
             if (currentVideo.IsNullOrEmpty()) return songList.First().YouTubeId;
 
             for (int i = 0; i < songList.Count - 1; i++)
@@ -41,6 +41,25 @@ namespace CoolProjectsAPI.Controllers
                 if (songList[i].YouTubeId.Equals(currentVideo)) return songList[i + 1].YouTubeId;
             }
             return songList.First().YouTubeId;
+        }
+
+        private static List<WikipediaSong> ReadPrioritisedList()
+        {
+            return JsonConvert.DeserializeObject<List<WikipediaSong>>(System.IO.File.ReadAllText("prioritisedList.json"));
+        }
+
+        [HttpGet]
+        [Route("GetYearText")]
+        public string GetYearText(string currentVideo)
+        {
+            List<WikipediaSong> songList = ReadPrioritisedList();
+            if (currentVideo.IsNullOrEmpty()) return "";
+
+            for (int i = 0; i < songList.Count - 1; i++)
+            {
+                if (songList[i].YouTubeId.Equals(currentVideo)) return $" ({songList[i].Year})";
+            }
+            return "";
         }
     }
 }
