@@ -44,7 +44,7 @@ namespace LeagueAPI_Classes
         {
             APIVars = new LeagueAPI_Variables();
             APIVars.InitialiseForCollectingData();
-            UpdateLocalVarsFile(APIVars);
+            await UpdateLocalVarsFile(APIVars);
             Matches = new HashSet<MatchDto>();
             ScannedGameIds = new HashSet<long>();
             ScannedAccountIds = new HashSet<string>();
@@ -52,9 +52,9 @@ namespace LeagueAPI_Classes
             {
                 Matches = await GetMatches_Recursive(playerAccountId: PersonalAccountId, maxCountOfGames: maxCountOfGames);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
             finally
             {
@@ -64,22 +64,38 @@ namespace LeagueAPI_Classes
             }
         }
 
-        private void UpdateLocalVarsFile(LeagueAPI_Variables aPIVars)
+        public static async Task UpdateLocalVarsFile(LeagueAPI_Variables aPIVars)
         {
-            LeagueAPI_Variables.UpdateLocalVarsFile(aPIVars);
+            try
+            {
+                LeagueAPI_Variables.UpdateLocalVarsFile(aPIVars);
+            }
+            catch (IOException)
+            {
+                await Task.Delay(1000);
+                LeagueAPI_Variables.UpdateLocalVarsFile(aPIVars);
+            }
         }
 
-        private LeagueAPI_Variables ReadLocalVarsFile()
+        public static async Task<LeagueAPI_Variables> ReadLocalVarsFile()
         {
-            return LeagueAPI_Variables.ReadLocalVarsFile();
+            try
+            {
+                return LeagueAPI_Variables.ReadLocalVarsFile();
+            }
+            catch (IOException)
+            {
+                await Task.Delay(1000);
+                return LeagueAPI_Variables.ReadLocalVarsFile();
+            }
         }
 
         private async Task<HashSet<MatchDto>> GetMatches_Recursive(string playerAccountId, int maxCountOfGames)
         {
-            if (Matches.Count >= maxCountOfGames || ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+            if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
             MatchlistDto matchlist = await LeagueAPIClient.GetMatchlist(playerAccountId);
             ScannedAccountIds.Add(playerAccountId);
-            if (matchlist.matches == null || ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+            if (matchlist.matches == null || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
             HashSet<ParticipantIdentityDto> participantIdentities = new HashSet<ParticipantIdentityDto>();
             foreach (MatchReferenceDto matchRef in matchlist.matches)
             {
@@ -93,8 +109,8 @@ namespace LeagueAPI_Classes
                 Matches.Add(match);
                 Debug.WriteLine(Matches.Count);
                 APIVars.CurrentProgress = $"{Matches.Count} out of {maxCountOfGames} ({((decimal)Matches.Count / (decimal)maxCountOfGames) * 100}%)";
-                UpdateLocalVarsFile(APIVars);
-                if (Matches.Count >= maxCountOfGames || ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+                await UpdateLocalVarsFile(APIVars);
+                if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
                 foreach (ParticipantIdentityDto identity in match.participantIdentities) participantIdentities.Add(identity);
             }
 
@@ -102,7 +118,7 @@ namespace LeagueAPI_Classes
             {
                 if (ScannedAccountIds.Contains(participantIdentity.player.accountId)) continue;
                 Matches = await GetMatches_Recursive(participantIdentity.player.accountId, maxCountOfGames);
-                if (Matches.Count >= maxCountOfGames || ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+                if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
             }
             return Matches;
         }
@@ -112,14 +128,14 @@ namespace LeagueAPI_Classes
         /// </summary>
         /// <remarks>Also saves the currently collected data if the user has requested to save the data.</remarks>
         /// <returns></returns>
-        private bool ReadVarsFileAndDetermineIfDataCollectionShouldStop()
+        private async Task<bool> ReadVarsFileAndDetermineIfDataCollectionShouldStop()
         {
-            LeagueAPI_Variables varsFile = ReadLocalVarsFile();
+            LeagueAPI_Variables varsFile = await ReadLocalVarsFile();
             if (varsFile.WriteCurrentlyCollectedData)
             {
                 WriteFiles(Matches);
                 varsFile.WriteCurrentlyCollectedData = false;
-                UpdateLocalVarsFile(varsFile);
+                await UpdateLocalVarsFile(varsFile);
             }
             return varsFile.StopCollectingData;
         }
