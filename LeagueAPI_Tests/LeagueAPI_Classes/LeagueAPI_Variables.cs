@@ -12,6 +12,7 @@ namespace LeagueAPI_Classes
         public const string varsFile = "LeagueAPI_Vars.json";
         public bool DataIsBeingCollected { get; set; }
         public bool StopCollectingData { get; set; }
+        public bool WriteCurrentlyCollectedData { get; set; }
         public string CurrentProgress { get; set; }
 
         public void InitialiseForCollectingData()
@@ -19,6 +20,7 @@ namespace LeagueAPI_Classes
             DataIsBeingCollected = true;
             StopCollectingData = false;
             CurrentProgress = "";
+            WriteCurrentlyCollectedData = false;
         }
 
         public void DataCollectionFinished()
@@ -26,6 +28,7 @@ namespace LeagueAPI_Classes
             DataIsBeingCollected = false;
             StopCollectingData = false;
             CurrentProgress = "";
+            WriteCurrentlyCollectedData = false;
         }
 
         public static LeagueAPI_Variables ReadLocalVarsFile()

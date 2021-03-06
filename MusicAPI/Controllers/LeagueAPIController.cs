@@ -20,7 +20,7 @@ namespace CoolProjectsAPI.Controllers
         [Route("CollectData")]
         public async Task<string> CollectData(string apiKey)
         {
-            LeagueAPI_Variables localVars = LeagueAPI_Variables.ReadLocalVarsFile();
+            LeagueAPI_Variables localVars = ReadLocalVarsFile();
             if (localVars != null) return "Data already being collected.";
 
             DataCollector dataCollector = new DataCollector(apiKey);
@@ -32,7 +32,7 @@ namespace CoolProjectsAPI.Controllers
         [Route("GetProgress")]
         public string GetProgress()
         {
-            LeagueAPI_Variables localVars = LeagueAPI_Variables.ReadLocalVarsFile();
+            LeagueAPI_Variables localVars = ReadLocalVarsFile();
             if (localVars == null) return "No data being collected.";
             return $"Progress is: {localVars.CurrentProgress}";
         }
@@ -41,11 +41,32 @@ namespace CoolProjectsAPI.Controllers
         [Route("StopCollectingData")]
         public string StopCollectingData()
         {
-            LeagueAPI_Variables localVars = LeagueAPI_Variables.ReadLocalVarsFile();
+            LeagueAPI_Variables localVars = ReadLocalVarsFile();
             if (localVars == null) return "No data being collected.";
             localVars.StopCollectingData = true;
+            UpdateLocalVarsFile(localVars);
+            return $"The request to stop collecting data was successful.";
+        }
+        
+        [HttpGet]
+        [Route("WriteCurrentlyCollectedData")]
+        public string WriteCurrentlyCollectedData()
+        {
+            LeagueAPI_Variables localVars = ReadLocalVarsFile();
+            if (localVars == null) return "No data being collected.";
+            localVars.WriteCurrentlyCollectedData = true;
+            UpdateLocalVarsFile(localVars);
+            return $"The request to write currently collected data was successful.";
+        }
+
+        private static LeagueAPI_Variables ReadLocalVarsFile()
+        {
+            return LeagueAPI_Variables.ReadLocalVarsFile();
+        }
+
+        private static void UpdateLocalVarsFile(LeagueAPI_Variables localVars)
+        {
             LeagueAPI_Variables.UpdateLocalVarsFile(localVars);
-            return $"Data collection stopped.";
         }
     }
 }

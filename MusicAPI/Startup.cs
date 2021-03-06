@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MusicAPI
+namespace CoolProjectsAPI
 {
     public class Startup
     {
@@ -30,7 +30,7 @@ namespace MusicAPI
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MusicAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CoolProjectsAPI", Version = "v1" });
             });
         }
 
@@ -40,7 +40,7 @@ namespace MusicAPI
             //if (env.IsDevelopment()) {}
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MusicAPI v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoolProjectsAPI v1"));
 
             app.UseHttpsRedirection();
 
