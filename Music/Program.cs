@@ -54,12 +54,15 @@ namespace Music
             List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
 
             SpotifyAPIClient spotifyAPIClient = new SpotifyAPIClient();
-            for (int i = 0; i < fullList.Count; i++)
-            {
-                WikipediaSong song = fullList[i];
-                await spotifyAPIClient.PopulateSongWithSpotifyData(song);
-                Debug.WriteLine(i);
-            }
+            //for (int i = 0; i < fullList.Count; i++)
+            //{
+            //    WikipediaSong song = fullList[i];
+            //    await spotifyAPIClient.PopulateSongWithSpotifyData(song);
+            //    Debug.WriteLine(i);
+            //}
+
+            await spotifyAPIClient.AddSongsToPlaylist(fullList);
+
             //string fullListJson = fullList.ToJson();
             //var x = 1;
             //string x = await ListHelper.GetYouTubeVideosArrayAsync(fullList);

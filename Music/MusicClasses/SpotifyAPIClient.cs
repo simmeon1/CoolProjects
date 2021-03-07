@@ -15,10 +15,11 @@ namespace MusicClasses
 {
     public class SpotifyAPIClient : BaseAPIClient
     {
+        private const string userId = "11151834210";
         private const string authHeaderName = "Authorization";
         private const string authHeaderValue_RefreshToken = "Basic YzlkZWM2ZGVjNzcyNGU5OThiN2E0ZGVkNDk5ZjA3Y2U6MTEzNmJjNmQzNjAwNGVlY2I0MzAxYzU4Nzg5OWMyNzQ=";
         private const string refreshToken = "AQBsnhhaLPL4tEdoLoZlA19WW4MBlnZqDMwO6RvwJ7sXPOKXozTTANeMXlhelrBdC9Q8ukzHoJyDyflyq9SDap1EYczO0hKiCe4a4rDRgXfWZGx3CennNenCwFzyLJhEWs0";
-        private const string TopTenAllv2PlaylistId = "46MnCmkIiVit7lBjYHHAgr";
+        private const string TopTenAllv2PlaylistId = "2CfFIr6XLNjLD7KgWjJcik";
 
         private string AccessToken { get; set; }
 
@@ -45,7 +46,7 @@ namespace MusicClasses
             AccessToken = $"Bearer {Regex.Matches(answer, "access_token.*?:\"(.*?)\"")[0].Groups[1].Value}";
             return AccessToken;
         }
-        
+
         public async Task PopulateSongWithSpotifyData(WikipediaSong song)
         {
             HttpRequestMessage requestMessage = await GetPreparedRequestMessage(
@@ -75,12 +76,40 @@ namespace MusicClasses
 
         public async Task AddSongsToPlaylist(List<WikipediaSong> songs)
         {
-            HttpRequestMessage requestMessage = await GetPreparedRequestMessage(
-                method: HttpMethod.Post,
-                url: $"https://api.spotify.com/v1/playlists/{TopTenAllv2PlaylistId}/tracks");
+            List<WikipediaSong> songsOrdered = songs.Where(s => !s.SpotifyId.IsNullOrEmpty()).OrderByDescending(s => s.YouTubeViews).Take(10000).ToList();
+            List<List<WikipediaSong>> listOf100SongLists = new List<List<WikipediaSong>>();
+            int indexCounter = 0;
+            listOf100SongLists.Add(new List<WikipediaSong>());
+            for (int i = 0; i < songsOrdered.Count; i++)
+            {
+                WikipediaSong song = songsOrdered[i];
+                listOf100SongLists[indexCounter].Add(song);
+                if (listOf100SongLists[indexCounter].Count < 100) continue;
+                indexCounter++;
+                listOf100SongLists.Add(new List<WikipediaSong>());
+            }
+
+            foreach (List<WikipediaSong> songList in listOf100SongLists)
+            {
+                StringBuilder songUris = new StringBuilder("[");
+                foreach (WikipediaSong song in songList)
+                {
+                    if (songUris.Length > 1) songUris.Append(",");
+                    songUris.Append($"\"spotify:track:{song.SpotifyId}\"");
+                }
+                songUris.Append("]");
+
+                HttpRequestMessage request = await GetPreparedRequestMessage(
+                    method: HttpMethod.Post,
+                    url: $"https://api.spotify.com/v1/playlists/{TopTenAllv2PlaylistId}/tracks");
+
+                request.Content = new StringContent(songUris.ToString(), Encoding.UTF8, "application/json");
+                request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                string result = await GetResponseContent(request);
+            }
         }
 
-            private async Task<string> GetResponseContent(HttpRequestMessage message)
+        private async Task<string> GetResponseContent(HttpRequestMessage message)
         {
             HttpResponseMessage response = await GetResponse(message);
             if (response.StatusCode == (HttpStatusCode)401)
