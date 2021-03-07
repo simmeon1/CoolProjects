@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExRxDotNet", "ExRxDotNet\Ex
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Music", "Music\Music.csproj", "{05DDE7E2-6E99-41D1-8E8C-4A547D4EEF4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoolProjectsAPI", "MusicAPI\CoolProjectsAPI.csproj", "{2B1AA7DC-4B50-4379-A689-468FFA951E84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoolProjectsAPI", "CoolProjectsAPI\CoolProjectsAPI.csproj", "{2B1AA7DC-4B50-4379-A689-468FFA951E84}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueAPI_Tests", "LeagueAPI_Tests\LeagueAPI_Tests.csproj", "{ED59BD63-E8A6-4F0D-93DE-E69208E013E7}"
 EndProject

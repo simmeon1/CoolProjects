@@ -61,7 +61,8 @@ namespace Music
             //    Debug.WriteLine(i);
             //}
 
-            await spotifyAPIClient.AddSongsToPlaylist(fullList);
+            string playlistId = await spotifyAPIClient.CreatePlaylist();
+            await spotifyAPIClient.AddSongsToPlaylist(fullList, playlistId);
 
             //string fullListJson = fullList.ToJson();
             //var x = 1;

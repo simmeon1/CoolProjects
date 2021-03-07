@@ -163,7 +163,7 @@ namespace LeagueAPI_Classes
         {
             // put champs file here
             ItemSet set = new ItemSet();
-            set.title = $"ItemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowStringForFileName()}";
+            set.title = $"ItemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}";
             set.associatedMaps = new List<int>() { 11, 12 };
             set.associatedChampions = new List<object>();
 
@@ -206,13 +206,13 @@ namespace LeagueAPI_Classes
                     else legendaries50MinusWR.items.Add(item);
                 }
             }
-            File.WriteAllText($"{Globals.ResultsPath}\\{$@"itemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowStringForFileName()}.json"}", JsonConvert.SerializeObject(set, Formatting.None));
+            File.WriteAllText($"{Globals.ResultsPath}\\{$@"itemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.json"}", JsonConvert.SerializeObject(set, Formatting.None));
         }
 
         private static void WriteChampJsonFile(List<Champion> champs)
         {
             if (!Directory.Exists(Globals.ResultsPath)) Directory.CreateDirectory(Globals.ResultsPath);
-            string fullFileName = $"{Globals.ResultsPath}\\{$@"champs_{ExtensionsAndStaticFunctions.GetDateTimeNowStringForFileName()}.txt"}";
+            string fullFileName = $"{Globals.ResultsPath}\\{$@"champs_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.txt"}";
             File.WriteAllText(fullFileName, JsonConvert.SerializeObject(champs, Formatting.None));
         }
 

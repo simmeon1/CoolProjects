@@ -19,7 +19,7 @@ namespace MusicClasses
         private const string authHeaderName = "Authorization";
         private const string authHeaderValue_RefreshToken = "Basic YzlkZWM2ZGVjNzcyNGU5OThiN2E0ZGVkNDk5ZjA3Y2U6MTEzNmJjNmQzNjAwNGVlY2I0MzAxYzU4Nzg5OWMyNzQ=";
         private const string refreshToken = "AQBsnhhaLPL4tEdoLoZlA19WW4MBlnZqDMwO6RvwJ7sXPOKXozTTANeMXlhelrBdC9Q8ukzHoJyDyflyq9SDap1EYczO0hKiCe4a4rDRgXfWZGx3CennNenCwFzyLJhEWs0";
-        private const string TopTenAllv2PlaylistId = "2CfFIr6XLNjLD7KgWjJcik";
+        //private const string TopTenAllv2PlaylistId = "2CfFIr6XLNjLD7KgWjJcik";
 
         private string AccessToken { get; set; }
 
@@ -74,15 +74,15 @@ namespace MusicClasses
             song.SpotifyArtist = artistString;
         }
 
-        public async Task AddSongsToPlaylist(List<WikipediaSong> songs)
+        public async Task AddSongsToPlaylist(List<WikipediaSong> songs, string playlistId)
         {
-            List<WikipediaSong> songsOrdered = songs.Where(s => !s.SpotifyId.IsNullOrEmpty()).OrderByDescending(s => s.YouTubeViews).Take(10000).ToList();
+            List <WikipediaSong> songsFiltered = songs.Where(s => !s.SpotifyId.IsNullOrEmpty()).Take(10000).ToList();
             List<List<WikipediaSong>> listOf100SongLists = new List<List<WikipediaSong>>();
             int indexCounter = 0;
             listOf100SongLists.Add(new List<WikipediaSong>());
-            for (int i = 0; i < songsOrdered.Count; i++)
+            for (int i = 0; i < songsFiltered.Count; i++)
             {
-                WikipediaSong song = songsOrdered[i];
+                WikipediaSong song = songsFiltered[i];
                 listOf100SongLists[indexCounter].Add(song);
                 if (listOf100SongLists[indexCounter].Count < 100) continue;
                 indexCounter++;
@@ -101,12 +101,27 @@ namespace MusicClasses
 
                 HttpRequestMessage request = await GetPreparedRequestMessage(
                     method: HttpMethod.Post,
-                    url: $"https://api.spotify.com/v1/playlists/{TopTenAllv2PlaylistId}/tracks");
+                    url: $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
 
-                request.Content = new StringContent(songUris.ToString(), Encoding.UTF8, "application/json");
-                request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                AddJsonAsBodyDataToRequest(request, songUris.ToString());
                 string result = await GetResponseContent(request);
             }
+        }
+
+        public async Task<string> CreatePlaylist()
+        {
+            HttpRequestMessage request = await GetPreparedRequestMessage(HttpMethod.Post, $"https://api.spotify.com/v1/users/{userId}/playlists");
+            string json = "{" + $"\"name\": \"Top Ten All v2 {ExtensionsAndStaticFunctions.GetDateTimeNowString()}\",\n\"public\": false\n" + "}";
+            AddJsonAsBodyDataToRequest(request, json);
+            string result = await GetResponseContent(request);
+            JObject jo = JObject.Parse(result);
+            return (string)jo["id"];
+        }
+
+        private static void AddJsonAsBodyDataToRequest(HttpRequestMessage request, string json)
+        {
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         }
 
         private async Task<string> GetResponseContent(HttpRequestMessage message)

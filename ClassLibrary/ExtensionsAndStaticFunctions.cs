@@ -66,7 +66,7 @@ namespace ClassLibrary
             }
         }
 
-        public static string GetDateTimeNowStringForFileName()
+        public static string GetDateTimeNowString()
         {
             DateTime dateTimeNow = DateTime.Now;
             string dateTimeNowStr = dateTimeNow.ToString("s", CultureInfo.CreateSpecificCulture("en-US"));

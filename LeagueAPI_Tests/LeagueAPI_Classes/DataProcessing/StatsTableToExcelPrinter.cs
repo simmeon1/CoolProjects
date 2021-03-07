@@ -18,7 +18,7 @@ namespace LeagueAPI_Classes
             using (Package = new ExcelPackage())
             {
                 foreach (DataTable statTable in statTables) AddTableToWorksheet(statTable);
-                Package.SaveAs(new FileInfo($@"{Globals.ResultsPath}Stats{descriptor}_{ExtensionsAndStaticFunctions.GetDateTimeNowStringForFileName()}.xlsx"));
+                Package.SaveAs(new FileInfo($@"{Globals.ResultsPath}Stats{descriptor}_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.xlsx"));
             }
             return true;
         }

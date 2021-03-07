@@ -36,7 +36,7 @@ public class ExcelPrinter : ExcelPrinterBase
         using (Package = new ExcelPackage())
         {
             AddTableToWorksheet(table);
-            Package.SaveAs(new FileInfo($@"Music_{ExtensionsAndStaticFunctions.GetDateTimeNowStringForFileName()}.xlsx"));
+            Package.SaveAs(new FileInfo($@"Music_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.xlsx"));
         }
 
     }
