@@ -18,8 +18,8 @@ namespace CoolProjectsAPI.Controllers
         public MusicAPIController(ILogger<MusicAPIController> logger) : base(logger) { }
 
         [HttpGet]
-        [Route("RefreshVideosAndGetNextVideo")]
-        public async Task<string> RefreshVideosAndGetNextVideoAsync()
+        [Route("RemakePrioritisedListAndGetNextVideo")]
+        public async Task<string> RemakePrioritisedListAndGetNextVideo()
         {
             List<WikipediaSong> fullList = JsonConvert.DeserializeObject<List<WikipediaSong>>(System.IO.File.ReadAllText("TopTenUKandUSSingles.json"));
             List<WikipediaSong> orderedList = fullList.OrderByDescending(s => s.YouTubeViews).ToList();
@@ -30,11 +30,12 @@ namespace CoolProjectsAPI.Controllers
         }
         
         [HttpGet]
-        [Route("CreateNewSpotifiedPlaylistFromRandomisedList")]
-        public async Task<string> CreateNewSpotifiedPlaylistFromRandomisedList()
+        [Route("RemakeTopTenPlaylistFromPrioritisedList")]
+        public async Task<string> RemakeTopTenPlaylistFromPrioritisedList()
         {
             List<WikipediaSong> list = JsonConvert.DeserializeObject<List<WikipediaSong>>(System.IO.File.ReadAllText("prioritisedList.json"));
             SpotifyAPIClient spotifyAPI = new SpotifyAPIClient();
+            await spotifyAPI.RemoveTopTenAllPlaylist();
             string newPlaylistId = await spotifyAPI.CreatePlaylist();
             await spotifyAPI.AddSongsToPlaylist(list, newPlaylistId);
             return "Playlist created and populated.";
