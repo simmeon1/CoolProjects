@@ -36,16 +36,14 @@ namespace LeagueAPI_Classes
             return JsonConvert.DeserializeObject<T>(response);
         }
 
-        protected async Task<string> GetResponseContent(HttpRequestMessage message)
-        {
-            HttpResponseMessage response = await GetResponse(message);
-            if (response.StatusCode == (HttpStatusCode)403) throw new Exception("Authorization is invalid.");
-            return await response.Content.ReadAsStringAsync();
-        }
-
         private HttpRequestMessage GetPreparedRequestMessage(HttpMethod method, string url)
         {
-            return GetRequestMessagePreparedWithAuthorizationHeaders(method, url, authHeaderName, ApiKey);
+            return CreateBaseRequestMessage(method, url, authHeaderName, ApiKey);
+        }
+
+        protected override Task UpdateRequestAuthorizationToSucceed(HttpRequestMessage request)
+        {
+            throw new Exception("API key is invalid.");
         }
     }
 }

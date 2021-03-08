@@ -26,16 +26,16 @@ namespace MusicClasses
         {
         }
 
-        private async Task<HttpRequestMessage> GetPreparedRequestMessage(HttpMethod method, string url, StringContent requestContent = null, bool requestIsForNewToken = false)
+        private async Task<HttpRequestMessage> CreateSpotifyRequestMessage(HttpMethod method, string url, StringContent requestContent = null, bool requestIsForNewToken = false)
         {
-            return GetRequestMessagePreparedWithAuthorizationHeaders(method, url, authHeaderName, requestIsForNewToken ? authHeaderValue_RefreshToken : await GetAccessTokenFromApiIfNeededAndReturnIt(), requestContent);
+            return CreateBaseRequestMessage(method, url, authHeaderName, requestIsForNewToken ? authHeaderValue_RefreshToken : await RefreshAccessToken(), requestContent);
         }
 
-        private async Task<string> GetAccessTokenFromApiIfNeededAndReturnIt(bool forceRefresh = false)
+        private async Task<string> RefreshAccessToken(bool forceRefresh = false)
         {
             if (!forceRefresh && !AccessToken.IsNullOrEmpty()) return AccessToken;
 
-            HttpRequestMessage requestMessage = await GetPreparedRequestMessage(
+            HttpRequestMessage requestMessage = await CreateSpotifyRequestMessage(
                 method: HttpMethod.Post,
                 url: "https://accounts.spotify.com/api/token",
                 requestContent: new StringContent($"grant_type=refresh_token&refresh_token={refreshToken}", Encoding.UTF8, "application/x-www-form-urlencoded"),
@@ -48,7 +48,7 @@ namespace MusicClasses
 
         public async Task PopulateSongWithSpotifyData(WikipediaSong song)
         {
-            HttpRequestMessage requestMessage = await GetPreparedRequestMessage(
+            HttpRequestMessage requestMessage = await CreateSpotifyRequestMessage(
                 method: HttpMethod.Get,
                 url: $"https://api.spotify.com/v1/search?q={song.GetArtistAndSongForSpotifyAPISearch()}&type=track&limit=1");
 
@@ -98,7 +98,7 @@ namespace MusicClasses
                 }
                 songUris.Append("]");
 
-                HttpRequestMessage request = await GetPreparedRequestMessage(
+                HttpRequestMessage request = await CreateSpotifyRequestMessage(
                     method: HttpMethod.Post,
                     url: $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
 
@@ -109,7 +109,7 @@ namespace MusicClasses
 
         public async Task<string> CreatePlaylist()
         {
-            HttpRequestMessage request = await GetPreparedRequestMessage(HttpMethod.Post, $"https://api.spotify.com/v1/users/{userId}/playlists");
+            HttpRequestMessage request = await CreateSpotifyRequestMessage(HttpMethod.Post, $"https://api.spotify.com/v1/users/{userId}/playlists");
             string json = "{" + $"\"name\": \"Top Ten All\",\n\"public\": false,\n\"description\": \"{ExtensionsAndStaticFunctions.GetDateTimeNowString()}\"\n" + "}";
             AddJsonAsBodyDataToRequest(json, request);
             string result = await GetResponseContent(request);
@@ -119,7 +119,7 @@ namespace MusicClasses
         
         public async Task<string> RemoveTopTenAllPlaylist()
         {
-            HttpRequestMessage retrievePlaylistsRequest = await GetPreparedRequestMessage(HttpMethod.Get, $"https://api.spotify.com/v1/me/playlists");
+            HttpRequestMessage retrievePlaylistsRequest = await CreateSpotifyRequestMessage(HttpMethod.Get, $"https://api.spotify.com/v1/me/playlists");
             string retrieveResult = await GetResponseContent(retrievePlaylistsRequest);
             
             JObject jo = JObject.Parse(retrieveResult);
@@ -129,8 +129,8 @@ namespace MusicClasses
                 string playlistName = (string)playlist["name"];
                 if (!playlistName.Equals("Top Ten All")) continue;
                 string playlistId = (string)playlist["id"];
-                HttpRequestMessage deletePlaylistRequest = await GetPreparedRequestMessage(HttpMethod.Delete, $"https://api.spotify.com/v1/playlists/{playlistId}/followers");
-                string deleteResult = await GetResponseContent(deletePlaylistRequest);
+                HttpRequestMessage deletePlaylistRequest = await CreateSpotifyRequestMessage(HttpMethod.Delete, $"https://api.spotify.com/v1/playlists/{playlistId}/followers");
+                await GetResponseContent(deletePlaylistRequest);
                 return "Playlist removed successfully.";
             }
             return "Playlist could not be found to remove.";
@@ -142,15 +142,10 @@ namespace MusicClasses
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         }
 
-        private async Task<string> GetResponseContent(HttpRequestMessage message)
+        protected override async Task UpdateRequestAuthorizationToSucceed(HttpRequestMessage request)
         {
-            HttpResponseMessage response = await GetResponse(message);
-            if (response.StatusCode == (HttpStatusCode)401)
-            {
-                await GetAccessTokenFromApiIfNeededAndReturnIt(forceRefresh: true);
-                response = await GetResponse(message);
-            }
-            return await response.Content.ReadAsStringAsync();
+            request.Headers.Clear();
+            request.Headers.Add(authHeaderName, await RefreshAccessToken(forceRefresh: true));
         }
     }
 }
