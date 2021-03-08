@@ -19,7 +19,6 @@ namespace MusicClasses
         private const string authHeaderName = "Authorization";
         private const string authHeaderValue_RefreshToken = "Basic YzlkZWM2ZGVjNzcyNGU5OThiN2E0ZGVkNDk5ZjA3Y2U6MTEzNmJjNmQzNjAwNGVlY2I0MzAxYzU4Nzg5OWMyNzQ=";
         private const string refreshToken = "AQBsnhhaLPL4tEdoLoZlA19WW4MBlnZqDMwO6RvwJ7sXPOKXozTTANeMXlhelrBdC9Q8ukzHoJyDyflyq9SDap1EYczO0hKiCe4a4rDRgXfWZGx3CennNenCwFzyLJhEWs0";
-        //private const string TopTenAllv2PlaylistId = "2CfFIr6XLNjLD7KgWjJcik";
 
         private string AccessToken { get; set; }
 
@@ -103,7 +102,7 @@ namespace MusicClasses
                     method: HttpMethod.Post,
                     url: $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
 
-                AddJsonAsBodyDataToRequest(request, songUris.ToString());
+                AddJsonAsBodyDataToRequest(songUris.ToString(), request);
                 string result = await GetResponseContent(request);
             }
         }
@@ -111,14 +110,33 @@ namespace MusicClasses
         public async Task<string> CreatePlaylist()
         {
             HttpRequestMessage request = await GetPreparedRequestMessage(HttpMethod.Post, $"https://api.spotify.com/v1/users/{userId}/playlists");
-            string json = "{" + $"\"name\": \"Top Ten All v2 {ExtensionsAndStaticFunctions.GetDateTimeNowString()}\",\n\"public\": false\n" + "}";
-            AddJsonAsBodyDataToRequest(request, json);
+            string json = "{" + $"\"name\": \"Top Ten All\",\n\"public\": false,\n\"description\": \"{ExtensionsAndStaticFunctions.GetDateTimeNowString()}\"\n" + "}";
+            AddJsonAsBodyDataToRequest(json, request);
             string result = await GetResponseContent(request);
             JObject jo = JObject.Parse(result);
             return (string)jo["id"];
         }
+        
+        public async Task<string> RemoveTopTenAllPlaylist()
+        {
+            HttpRequestMessage retrievePlaylistsRequest = await GetPreparedRequestMessage(HttpMethod.Get, $"https://api.spotify.com/v1/me/playlists");
+            string retrieveResult = await GetResponseContent(retrievePlaylistsRequest);
+            
+            JObject jo = JObject.Parse(retrieveResult);
+            JArray playlists = (JArray)jo["items"];
+            foreach (JToken playlist in playlists)
+            {
+                string playlistName = (string)playlist["name"];
+                if (!playlistName.Equals("Top Ten All")) continue;
+                string playlistId = (string)playlist["id"];
+                HttpRequestMessage deletePlaylistRequest = await GetPreparedRequestMessage(HttpMethod.Delete, $"https://api.spotify.com/v1/playlists/{playlistId}/followers");
+                string deleteResult = await GetResponseContent(deletePlaylistRequest);
+                return "Playlist removed successfully.";
+            }
+            return "Playlist could not be found to remove.";
+        }
 
-        private static void AddJsonAsBodyDataToRequest(HttpRequestMessage request, string json)
+        private static void AddJsonAsBodyDataToRequest(string json, HttpRequestMessage request)
         {
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");

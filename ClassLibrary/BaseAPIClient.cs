@@ -34,7 +34,11 @@ namespace ClassLibrary
                 await Task.Delay(retryAfter == null ? 1000 : (int)retryAfter.Delta.Value.TotalMilliseconds);
                 HttpRequestMessage newRequest = new HttpRequestMessage(method: originalRequest.Method, requestUri: originalRequest.RequestUri);
                 foreach (KeyValuePair<string, IEnumerable<string>> header in originalRequest.Headers) newRequest.Headers.Add(header.Key, header.Value);
-                if (originalRequest.Content != null) newRequest.Content = originalRequest.Content;
+                if (originalRequest.Content != null)
+                {
+                    newRequest.Content = originalRequest.Content;
+                    newRequest.Content.Headers.ContentType = originalRequest.Content.Headers.ContentType;
+                }
                 response = await Client.SendAsync(newRequest);
             }
             return response;
