@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading.Tasks;
 using ClassLibrary;
 using MusicClasses;
+using Music.MusicClasses;
 
 namespace CoolProjectsAPI.Controllers
 {
@@ -34,7 +35,7 @@ namespace CoolProjectsAPI.Controllers
         public async Task<string> RemakeTopTenPlaylistFromPrioritisedList()
         {
             List<WikipediaSong> list = JsonConvert.DeserializeObject<List<WikipediaSong>>(System.IO.File.ReadAllText("prioritisedList.json"));
-            SpotifyAPIClient spotifyAPI = new SpotifyAPIClient();
+            SpotifyAPIClient spotifyAPI = new SpotifyAPIClient(System.IO.File.ReadAllText("credentials.json").ToObject<SpotifyAccountCredentials>());
             await spotifyAPI.RemoveTopTenAllPlaylist();
             string newPlaylistId = await spotifyAPI.CreatePlaylist();
             await spotifyAPI.AddSongsToPlaylist(list, newPlaylistId);

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClassLibrary;
+using Music.MusicClasses;
 using MusicClasses;
 
 namespace Music
@@ -51,9 +53,12 @@ namespace Music
             //List<WikipediaSong> removedYouTubeDuplicates = ListHelper.RemoveYouTubeDuplicates(fullList);
             //var bsdfsdf = removedYouTubeDuplicates.ToJson();
 
-            List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
+            //List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
 
-            SpotifyAPIClient spotifyAPIClient = new SpotifyAPIClient();
+            SpotifyAccountCredentials credentials = File.ReadAllText("credentials.json").ToObject<SpotifyAccountCredentials>();
+
+            SpotifyAPIClient spotifyAPIClient = new SpotifyAPIClient(credentials);
+            string responseContent = await spotifyAPIClient.GetUserPlaylists();
             //for (int i = 0; i < fullList.Count; i++)
             //{
             //    WikipediaSong song = fullList[i];
@@ -61,9 +66,9 @@ namespace Music
             //    Debug.WriteLine(i);
             //}
 
-            string playlistId = await spotifyAPIClient.CreatePlaylist();
-            await spotifyAPIClient.AddSongsToPlaylist(fullList.Take(1).ToList(), playlistId);
-            string x = await spotifyAPIClient.RemoveTopTenAllPlaylist();
+            //string playlistId = await spotifyAPIClient.CreatePlaylist();
+            //await spotifyAPIClient.AddSongsToPlaylist(fullList.Take(1).ToList(), playlistId);
+            //string x = await spotifyAPIClient.RemoveTopTenAllPlaylist();
 
 
             //string fullListJson = fullList.ToJson();
