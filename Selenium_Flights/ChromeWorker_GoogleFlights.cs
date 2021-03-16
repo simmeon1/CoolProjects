@@ -16,8 +16,10 @@ namespace Selenium_Flights
         {
         }
 
-        public void LookUpPathsOnGoogleFlights(AirportToAirportPaths paths)
+        public void LookUpPathsOnGoogleFlights(AirportToAirportPaths paths, DateTime? date = null)
         {
+            date = date ?? DateTime.Now;
+
             Driver.Navigate().GoToUrl("https://www.google.com/travel/flights/search");
             IWebElement cookiesIframe = GetElementWithXPath(@"/html/body/c-wiz[1]/div[1]/div[1]/div[2]/div[2]/iframe");
             if (cookiesIframe != null)
@@ -39,48 +41,74 @@ namespace Selenium_Flights
                     ReadOnlyCollection<string> windows = Driver.WindowHandles;
                     Driver.SwitchTo().Window(windows[windows.Count - 1]);
 
+
                     IWebElement oneWayOrRoundTripSelection = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[1]/div[1]/div/div[1]/div[1]/div/button");
                     oneWayOrRoundTripSelection.Click();
 
                     IWebElement oneWayButton = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[1]/div[1]/div/div[1]/div[2]/div[2]/ul/li[2]");
                     oneWayButton.Click();
 
-                    IWebElement originInput = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[2]/div/div/div[1]/div/div/input");
+                    ReadOnlyCollection<IWebElement> inputs = (ReadOnlyCollection<IWebElement>)Driver.ExecuteScript("return document.querySelectorAll('input')");
+                    IWebElement originInput = inputs[0];
                     originInput.Click();
-                    Thread.Sleep(100);
-                    IWebElement originInputUpdated = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[2]/div[1]/div[1]/div/input");
+                    Thread.Sleep(500);
+
+                    IWebElement originInputUpdated = inputs[1];
                     originInputUpdated.Clear();
+                    Thread.Sleep(500);
                     originInputUpdated.SendKeys(airportFrom.IATA);
 
                     Thread.Sleep(500);
-                    IWebElement origin_firstChoice = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[3]/ul/li[1]");
+
+                    const string getFirstOptionOfAIrportDropdown = "return arguments[0].parentElement.parentElement.parentElement.parentElement.querySelector('ul > li:nth-child(1)')";
+
+                    IWebElement origin_firstChoice = (IWebElement)Driver.ExecuteScript(getFirstOptionOfAIrportDropdown, originInputUpdated);
                     origin_firstChoice.Click();
 
-                    IWebElement destinationInput = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[5]/div/div/div[1]/div/div/input");
+                    IWebElement destinationInput = inputs[2];
                     destinationInput.Click();
                     Thread.Sleep(100);
-                    IWebElement destinationInputUpdated = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[2]/div[1]/div[1]/div/input");
+
+                    IWebElement destinationInputUpdated = inputs[3];
                     destinationInputUpdated.Clear();
                     destinationInputUpdated.SendKeys(airportTo.IATA);
 
                     Thread.Sleep(500);
-                    IWebElement destination_firstChoice = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[1]/div[2]/div[1]/div[6]/div[3]/ul/li[1]");
+                    IWebElement destination_firstChoice = (IWebElement)Driver.ExecuteScript(getFirstOptionOfAIrportDropdown, destinationInputUpdated);
                     destination_firstChoice.Click();
 
-                    IWebElement searchButton = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div[2]/div/button");
-                    searchButton.Click();
-                    
-                    IWebElement stopsButton = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div/div[4]/div[1]/div[1]/div/div[1]/div/div/div/button");
+                    IWebElement dateInput = inputs[4];
+                    dateInput.Click();
+
+                    dateInput = inputs[6];
+                    dateInput.SendKeys(date.GetValueOrDefault().ToString("ddd, MMM dd"));
+
+                    Thread.Sleep(500);
+
+                    IWebElement calendarDiv = (IWebElement)Driver.ExecuteScript("return arguments[0].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement", dateInput);
+                    IWebElement dateDoneButton = GetButtonThatContainsSpecificText("button", "Done", calendarDiv);
+                    dateDoneButton.Click();
+                    Thread.Sleep(500);
+
+                    //IWebElement searchButton = GetButtonThatContainsSpecificText("button", "earch");
+
+                    //searchButton.Click();
+                    //Thread.Sleep(2000);
+
+                    IWebElement stopsButton = GetButtonThatContainsSpecificText("button", "tops");
                     stopsButton.Click();
                     
-                    IWebElement nonStopOnlySelection = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div/div[4]/div[1]/div[1]/div/div[2]/div[3]/ol/li[2]");
+                    IWebElement nonStopOnlySelection = GetButtonThatContainsSpecificText("li", "number of stops");
                     nonStopOnlySelection.Click();
-                    
-                    IWebElement closeStops = GetElementWithXPath("/html/body/c-wiz[2]/div/div[2]/div/c-wiz/div/c-wiz/div[2]/div[1]/div/div[4]/div[1]/div[1]/div/div[2]/div[4]/button");
-                    closeStops.Click();
+
+                    IWebElement stopsMenu = (IWebElement)Driver.ExecuteScript("return arguments[0].parentElement.parentElement.parentElement", nonStopOnlySelection);
+                    IWebElement closeStopsButton = (IWebElement)Driver.ExecuteScript("return arguments[0].querySelector('button')", stopsMenu);
+                    closeStopsButton.Click();
+
+                    //IWebElement dateInputNew = (IWebElement)Driver.ExecuteScript("return document.querySelectorAll('input')[4]");
+                    //dateInputNew.Click();
                 }
             }
-
         }
     }
 }

@@ -71,5 +71,20 @@ namespace ClassLibrary.SeleniumClasses
             for (int i = 0; i < elements.Count; i++) if (i == index) return elements[i];
             return null;
         }
+
+        protected IWebElement GetButtonThatContainsSpecificText(string elementType, string textInsideElement, IWebElement elementToLookIn = null)
+        {
+            string elementToLookInStr = elementToLookIn == null ? "document" : "arguments[0]";
+            string script = "var elements = " + elementToLookInStr + ".querySelectorAll('" + elementType + "');" +
+                                "var element;" +
+                                "for (var i = 0; i < elements.length; i++) {" +
+                                    "if (elements[i].innerText.includes('" + textInsideElement + "')) {" +
+                                        "element = elements[i];" +
+                                        "break;" +
+                                    "}" +
+                                "}" +
+                                "return element;";
+            return (IWebElement)Driver.ExecuteScript(script, elementToLookIn);
+        }
     }
 }
