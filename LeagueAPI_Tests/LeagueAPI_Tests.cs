@@ -19,7 +19,7 @@ namespace LeagueAPI_Tests
         [TestInitialize]
         public void Initialize()
         {
-            leagueAPIClient = new LeagueAPIClient("RGAPI-438ea808-9a60-4fbc-81cc-cb1edec7504f");
+            leagueAPIClient = new LeagueAPIClient("RGAPI-ca7c6a5c-02c4-4b3c-b2ef-7831275c862d");
         }
 
         [TestMethod]

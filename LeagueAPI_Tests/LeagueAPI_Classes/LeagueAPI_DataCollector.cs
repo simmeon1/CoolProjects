@@ -18,6 +18,7 @@ namespace LeagueAPI_Classes
         private LeagueAPIClient LeagueAPIClient { get; set; }
         private HashSet<long> ScannedGameIds { get; set; }
         private HashSet<string> ScannedAccountIds { get; set; }
+        private List<string> AccountsToScan { get; set; }
         private string LatestGameVersion { get; set; }
         private int? LastQueue { get; set; }
 
@@ -47,9 +48,16 @@ namespace LeagueAPI_Classes
             Matches = new HashSet<MatchDto>();
             ScannedGameIds = new HashSet<long>();
             ScannedAccountIds = new HashSet<string>();
+            AccountsToScan = new List<string>() { PersonalAccountId };
+
             try
             {
-                Matches = await GetMatches_Recursive(playerAccountId: PersonalAccountId, maxCountOfGames: maxCountOfGames);
+                while (AccountsToScan.Count > 0)
+                {
+                    Matches = await GetMatches(playerAccountId: AccountsToScan[0], maxCountOfGames: maxCountOfGames);
+                    AccountsToScan.RemoveAt(0);
+                    if (Matches.Count >= maxCountOfGames) break;
+                }
             }
             catch (Exception)
             {
@@ -89,7 +97,7 @@ namespace LeagueAPI_Classes
             }
         }
 
-        private async Task<HashSet<MatchDto>> GetMatches_Recursive(string playerAccountId, int maxCountOfGames)
+        private async Task<HashSet<MatchDto>> GetMatches(string playerAccountId, int maxCountOfGames)
         {
             if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
             MatchlistDto matchlist = await LeagueAPIClient.GetMatchlist(playerAccountId);
@@ -118,11 +126,11 @@ namespace LeagueAPI_Classes
                 foreach (ParticipantIdentityDto identity in match.participantIdentities) participantIdentities.Add(identity);
             }
 
+            if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+
             foreach (ParticipantIdentityDto participantIdentity in participantIdentities)
             {
-                if (ScannedAccountIds.Contains(participantIdentity.player.accountId)) continue;
-                Matches = await GetMatches_Recursive(participantIdentity.player.accountId, maxCountOfGames);
-                if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+                if (!ScannedAccountIds.Contains(participantIdentity.player.accountId)) AccountsToScan.Add(participantIdentity.player.accountId);
             }
             return Matches;
         }
