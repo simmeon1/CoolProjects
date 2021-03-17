@@ -17,8 +17,8 @@ namespace LeagueAPI_Classes
         public HashSet<MatchDto> Matches { get; set; }
         private LeagueAPIClient LeagueAPIClient { get; set; }
         private HashSet<long> ScannedGameIds { get; set; }
-        private HashSet<string> ScannedAccountIds { get; set; }
         private List<string> AccountsToScan { get; set; }
+        private HashSet<string> AccountsAddedForScanning { get; set; }
         private string LatestGameVersion { get; set; }
         private int? LastQueue { get; set; }
 
@@ -47,21 +47,15 @@ namespace LeagueAPI_Classes
             await UpdateLocalVarsFile(apiVars);
             Matches = new HashSet<MatchDto>();
             ScannedGameIds = new HashSet<long>();
-            ScannedAccountIds = new HashSet<string>();
             AccountsToScan = new List<string>() { PersonalAccountId };
+            AccountsAddedForScanning = new HashSet<string>() { PersonalAccountId };
 
             try
             {
                 while (true)
                 {
                     string accountToScan = AccountsToScan[0];
-                    while (ScannedAccountIds.Contains(accountToScan))
-                    {
-                        AccountsToScan.RemoveAt(0);
-                        accountToScan = AccountsToScan[0];
-                    }
                     Matches = await GetMatches(playerAccountId: accountToScan, maxCountOfGames: maxCountOfGames);
-                    ScannedAccountIds.Add(accountToScan);
                     AccountsToScan.RemoveAt(0);
                     if (Matches.Count >= maxCountOfGames) break;
                 }
@@ -134,7 +128,13 @@ namespace LeagueAPI_Classes
 
             if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
 
-            foreach (ParticipantIdentityDto participantIdentity in participantIdentities) AccountsToScan.Add(participantIdentity.player.accountId);
+            foreach (ParticipantIdentityDto participantIdentity in participantIdentities)
+            {
+                string playerAccount = participantIdentity.player.accountId;
+                if (AccountsAddedForScanning.Contains(playerAccount)) continue;
+                AccountsToScan.Add(playerAccount);
+                AccountsAddedForScanning.Add(playerAccount);
+            }
             return Matches;
         }
 
