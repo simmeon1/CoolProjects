@@ -52,9 +52,16 @@ namespace LeagueAPI_Classes
 
             try
             {
-                while (AccountsToScan.Count > 0)
+                while (true)
                 {
-                    Matches = await GetMatches(playerAccountId: AccountsToScan[0], maxCountOfGames: maxCountOfGames);
+                    string accountToScan = AccountsToScan[0];
+                    while (ScannedAccountIds.Contains(accountToScan))
+                    {
+                        AccountsToScan.RemoveAt(0);
+                        accountToScan = AccountsToScan[0];
+                    }
+                    Matches = await GetMatches(playerAccountId: accountToScan, maxCountOfGames: maxCountOfGames);
+                    ScannedAccountIds.Add(accountToScan);
                     AccountsToScan.RemoveAt(0);
                     if (Matches.Count >= maxCountOfGames) break;
                 }
@@ -101,7 +108,6 @@ namespace LeagueAPI_Classes
         {
             if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
             MatchlistDto matchlist = await LeagueAPIClient.GetMatchlist(playerAccountId);
-            ScannedAccountIds.Add(playerAccountId);
             if (matchlist.matches == null || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
             HashSet<ParticipantIdentityDto> participantIdentities = new HashSet<ParticipantIdentityDto>();
             foreach (MatchReferenceDto matchRef in matchlist.matches)
@@ -128,10 +134,7 @@ namespace LeagueAPI_Classes
 
             if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
 
-            foreach (ParticipantIdentityDto participantIdentity in participantIdentities)
-            {
-                if (!ScannedAccountIds.Contains(participantIdentity.player.accountId)) AccountsToScan.Add(participantIdentity.player.accountId);
-            }
+            foreach (ParticipantIdentityDto participantIdentity in participantIdentities) AccountsToScan.Add(participantIdentity.player.accountId);
             return Matches;
         }
 
