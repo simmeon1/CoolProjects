@@ -21,6 +21,7 @@ namespace LeagueAPI_Classes
         private HashSet<string> AccountsAddedForScanning { get; set; }
         private string LatestGameVersion { get; set; }
         private int? LastQueue { get; set; }
+        private int MaxGamesToCollect { get; set; }
 
         private const string varsFile = LeagueAPI_Variables.varsFile;
 
@@ -34,15 +35,9 @@ namespace LeagueAPI_Classes
             this.LeagueAPIClient = leagueAPIClient;
         }
 
-        /// <summary>
-        /// Set <paramref name="scanArams"/> to true for arams, false for summoners rift.
-        /// </summary>
-        /// <param name="maxCountOfGames"></param>
-        /// <param name="scanArams"></param>
-        /// <returns></returns>
         public async Task CollectMatchesData(int maxCountOfGames)
         {
-            LeagueAPI_Variables apiVars = new LeagueAPI_Variables();
+            LeagueAPI_Variables apiVars = new();
             apiVars.InitialiseForCollectingData();
             await UpdateLocalVarsFile(apiVars);
             Matches = new HashSet<MatchDto>();
@@ -50,12 +45,13 @@ namespace LeagueAPI_Classes
             AccountsToScan = new Queue<string>();
             AccountsToScan.Enqueue(PersonalAccountId);
             AccountsAddedForScanning = new HashSet<string>() { PersonalAccountId };
+            MaxGamesToCollect = maxCountOfGames;
 
             try
             {
-                while (Matches.Count < maxCountOfGames)
+                while (Matches.Count < MaxGamesToCollect)
                 {
-                    bool stopCollecting = await GetMatches(playerAccountId: AccountsToScan.Dequeue(), maxCountOfGames: maxCountOfGames);
+                    bool stopCollecting = await GetMatches(playerAccountId: AccountsToScan.Dequeue());
                     if (stopCollecting) break;
                 }
             }
@@ -100,11 +96,9 @@ namespace LeagueAPI_Classes
         /// <summary>Gets matches for a player account.</summary>
         /// <remarks>Run in a loop in <see cref="CollectMatchesData(int)"/>. Boolean result determines if we want to stop or continue collecting data.</remarks>
         /// <returns>Returns true if data collection is to be stopped, false if it is to continue.</returns>
-        private async Task<bool> GetMatches(string playerAccountId, int maxCountOfGames)
+        private async Task<bool> GetMatches(string playerAccountId)
         {
-            //If we've sent a command to stop the data collection, return true.
-            if (await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return true;
-
+            int initialMatchesCount = Matches.Count;
             MatchlistDto matchlist = await LeagueAPIClient.GetMatchlist(playerAccountId);
 
             //Stop scanning this account if it has no history (but don't stop collecting from other accounts).
@@ -121,21 +115,18 @@ namespace LeagueAPI_Classes
                 if (string.IsNullOrEmpty(LatestGameVersion)) LatestGameVersion = match.gameVersion;
                 if (!match.gameVersion.Contains(LatestGameVersion)) break;
                 Matches.Add(match);
-
-                //Record progress
-                Debug.WriteLine(Matches.Count);
-                LeagueAPI_Variables apiVars = await ReadLocalVarsFile();
-                string currentProgress = $"{Matches.Count} out of {maxCountOfGames} ({((decimal)Matches.Count / (decimal)maxCountOfGames) * 100}%)";
-                apiVars.CurrentProgress = currentProgress;
-                await UpdateLocalVarsFile(apiVars);
-
-                //If we've sent a command to stop the data collection, return true.
-                if (await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return true;
                 foreach (ParticipantIdentityDto identity in match.participantIdentities) participantIdentities.Add(identity);
             }
 
-            //If we've sent a command to stop the data collection, return true.
-            if (await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return true;
+            if (Matches.Count > initialMatchesCount)
+            {
+                //Record progress
+                Debug.WriteLine(Matches.Count);
+                LeagueAPI_Variables apiVars = await ReadLocalVarsFile();
+                string currentProgress = $"{Matches.Count} out of {MaxGamesToCollect} ({((decimal)Matches.Count / (decimal)MaxGamesToCollect) * 100}%)";
+                apiVars.CurrentProgress = currentProgress;
+                await UpdateLocalVarsFile(apiVars);
+            }
 
             foreach (ParticipantIdentityDto participantIdentity in participantIdentities)
             {
@@ -144,7 +135,8 @@ namespace LeagueAPI_Classes
                 AccountsToScan.Enqueue(playerAccount);
                 AccountsAddedForScanning.Add(playerAccount);
             }
-            return false;
+
+            return await ReadVarsFileAndDetermineIfDataCollectionShouldStop();
         }
 
         /// <summary>
