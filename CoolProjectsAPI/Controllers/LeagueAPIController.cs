@@ -18,13 +18,13 @@ namespace CoolProjectsAPI.Controllers
 
         [HttpGet]
         [Route("CollectData")]
-        public async Task<string> CollectData(string apiKey)
+        public async Task<string> CollectData(string apiKey, int maxCountOfGames = 50000)
         {
             LeagueAPI_Variables localVars = await ReadLocalVarsFile();
             if (localVars != null) return "Data already being collected.";
 
-            LeagueAPI_DataCollector dataCollector = new LeagueAPI_DataCollector(apiKey);
-            await dataCollector.CollectMatchesData(maxCountOfGames: 50000);
+            LeagueAPI_DataCollector dataCollector = new(apiKey);
+            await dataCollector.CollectMatchesData(maxCountOfGames: maxCountOfGames);
             return $"Data collection finished! Collected {dataCollector.Matches.Count} matches.";
         }
 

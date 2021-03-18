@@ -17,7 +17,7 @@ namespace LeagueAPI_Classes
         public HashSet<MatchDto> Matches { get; set; }
         private LeagueAPIClient LeagueAPIClient { get; set; }
         private HashSet<long> ScannedGameIds { get; set; }
-        private List<string> AccountsToScan { get; set; }
+        private Queue<string> AccountsToScan { get; set; }
         private HashSet<string> AccountsAddedForScanning { get; set; }
         private string LatestGameVersion { get; set; }
         private int? LastQueue { get; set; }
@@ -47,17 +47,16 @@ namespace LeagueAPI_Classes
             await UpdateLocalVarsFile(apiVars);
             Matches = new HashSet<MatchDto>();
             ScannedGameIds = new HashSet<long>();
-            AccountsToScan = new List<string>() { PersonalAccountId };
+            AccountsToScan = new Queue<string>();
+            AccountsToScan.Enqueue(PersonalAccountId);
             AccountsAddedForScanning = new HashSet<string>() { PersonalAccountId };
 
             try
             {
-                while (true)
+                while (Matches.Count < maxCountOfGames)
                 {
-                    string accountToScan = AccountsToScan[0];
-                    Matches = await GetMatches(playerAccountId: accountToScan, maxCountOfGames: maxCountOfGames);
-                    AccountsToScan.RemoveAt(0);
-                    if (Matches.Count >= maxCountOfGames) break;
+                    bool stopCollecting = await GetMatches(playerAccountId: AccountsToScan.Dequeue(), maxCountOfGames: maxCountOfGames);
+                    if (stopCollecting) break;
                 }
             }
             catch (Exception)
@@ -98,11 +97,19 @@ namespace LeagueAPI_Classes
             }
         }
 
-        private async Task<HashSet<MatchDto>> GetMatches(string playerAccountId, int maxCountOfGames)
+        /// <summary>Gets matches for a player account.</summary>
+        /// <remarks>Run in a loop in <see cref="CollectMatchesData(int)"/>. Boolean result determines if we want to stop or continue collecting data.</remarks>
+        /// <returns>Returns true if data collection is to be stopped, false if it is to continue.</returns>
+        private async Task<bool> GetMatches(string playerAccountId, int maxCountOfGames)
         {
-            if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+            //If we've sent a command to stop the data collection, return true.
+            if (await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return true;
+
             MatchlistDto matchlist = await LeagueAPIClient.GetMatchlist(playerAccountId);
-            if (matchlist.matches == null || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+
+            //Stop scanning this account if it has no history (but don't stop collecting from other accounts).
+            if (matchlist.matches == null) return false;
+
             HashSet<ParticipantIdentityDto> participantIdentities = new HashSet<ParticipantIdentityDto>();
             foreach (MatchReferenceDto matchRef in matchlist.matches)
             {
@@ -122,20 +129,22 @@ namespace LeagueAPI_Classes
                 apiVars.CurrentProgress = currentProgress;
                 await UpdateLocalVarsFile(apiVars);
 
-                if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+                //If we've sent a command to stop the data collection, return true.
+                if (await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return true;
                 foreach (ParticipantIdentityDto identity in match.participantIdentities) participantIdentities.Add(identity);
             }
 
-            if (Matches.Count >= maxCountOfGames || await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return Matches;
+            //If we've sent a command to stop the data collection, return true.
+            if (await ReadVarsFileAndDetermineIfDataCollectionShouldStop()) return true;
 
             foreach (ParticipantIdentityDto participantIdentity in participantIdentities)
             {
                 string playerAccount = participantIdentity.player.accountId;
                 if (AccountsAddedForScanning.Contains(playerAccount)) continue;
-                AccountsToScan.Add(playerAccount);
+                AccountsToScan.Enqueue(playerAccount);
                 AccountsAddedForScanning.Add(playerAccount);
             }
-            return Matches;
+            return false;
         }
 
         /// <summary>
