@@ -115,13 +115,13 @@ namespace LeagueAPI_Classes
                 if (string.IsNullOrEmpty(LatestGameVersion)) LatestGameVersion = match.gameVersion;
                 if (!match.gameVersion.Contains(LatestGameVersion)) break;
                 Matches.Add(match);
+                Debug.WriteLine(Matches.Count);
                 foreach (ParticipantIdentityDto identity in match.participantIdentities) participantIdentities.Add(identity);
             }
 
             if (Matches.Count > initialMatchesCount)
             {
                 //Record progress
-                Debug.WriteLine(Matches.Count);
                 LeagueAPI_Variables apiVars = await ReadLocalVarsFile();
                 string currentProgress = $"{Matches.Count} out of {MaxGamesToCollect} ({((decimal)Matches.Count / (decimal)MaxGamesToCollect) * 100}%)";
                 apiVars.CurrentProgress = currentProgress;

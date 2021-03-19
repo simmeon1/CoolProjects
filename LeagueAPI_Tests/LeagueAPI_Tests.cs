@@ -19,11 +19,11 @@ namespace LeagueAPI_Tests
         [TestInitialize]
         public void Initialize()
         {
-            leagueAPIClient = new LeagueAPIClient("RGAPI-ca7c6a5c-02c4-4b3c-b2ef-7831275c862d");
+            leagueAPIClient = new LeagueAPIClient("RGAPI-2701df9e-0a9d-4c47-bc92-8d2c48cf8939");
         }
 
         [TestMethod]
-        public async Task GetMatches_Recursive_Test()
+        public async Task CollectMatchesData()
         {
             LeagueAPI_DataCollector dataCollector = new LeagueAPI_DataCollector(leagueAPIClient);
             await dataCollector.CollectMatchesData(maxCountOfGames: 50000);
