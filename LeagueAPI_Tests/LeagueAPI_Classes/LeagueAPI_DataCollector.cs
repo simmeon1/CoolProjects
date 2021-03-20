@@ -22,6 +22,7 @@ namespace LeagueAPI_Classes
         private string LatestGameVersion { get; set; }
         private int? LastQueue { get; set; }
         private int MaxGamesToCollect { get; set; }
+        private long AccountsScanned { get; set; }
 
         private const string varsFile = LeagueAPI_Variables.varsFile;
 
@@ -35,7 +36,7 @@ namespace LeagueAPI_Classes
             this.LeagueAPIClient = leagueAPIClient;
         }
 
-        public async Task CollectMatchesData(int maxCountOfGames)
+        public async Task<string> CollectMatchesData(int maxCountOfGames)
         {
             LeagueAPI_Variables apiVars = new();
             apiVars.InitialiseForCollectingData();
@@ -46,14 +47,21 @@ namespace LeagueAPI_Classes
             AccountsToScan.Enqueue(PersonalAccountId);
             AccountsAddedForScanning = new HashSet<string>() { PersonalAccountId };
             MaxGamesToCollect = maxCountOfGames;
+            AccountsScanned = 0;
 
             try
             {
-                while (Matches.Count < MaxGamesToCollect)
+                while (MaxGamesToCollect == 0 || Matches.Count < MaxGamesToCollect)
                 {
                     bool stopCollecting = await GetMatches(playerAccountId: AccountsToScan.Dequeue());
+                    AccountsScanned++;
                     if (stopCollecting) break;
                 }
+                return $"Max number of games for collection reached.{Environment.NewLine}{GetProgressAndScanStatisticsMessage()}";
+            }
+            catch (APIKeyIsInvalidException)
+            {
+                return $"API Key has expired.{Environment.NewLine}{GetProgressAndScanStatisticsMessage()}";
             }
             catch (Exception)
             {
@@ -65,6 +73,19 @@ namespace LeagueAPI_Classes
                 apiVars.DataCollectionFinished();
                 File.Delete(varsFile);
             }
+        }
+
+        private string GetProgressMessage()
+        {
+
+            string baseMessage = $"Collected {Matches.Count} matches";
+            baseMessage += MaxGamesToCollect == 0 ? "." : $" out of {MaxGamesToCollect} ({((decimal)Matches.Count / (decimal)MaxGamesToCollect) * 100}%).";
+            return baseMessage;
+        }
+
+        private string GetProgressAndScanStatisticsMessage()
+        {
+            return $"{GetProgressMessage()}{Environment.NewLine}Accounts scanned: {AccountsScanned}{Environment.NewLine}Accounts left to scan: {AccountsToScan.Count}";
         }
 
         public static async Task UpdateLocalVarsFile(LeagueAPI_Variables aPIVars)
@@ -123,7 +144,7 @@ namespace LeagueAPI_Classes
             {
                 //Record progress
                 LeagueAPI_Variables apiVars = await ReadLocalVarsFile();
-                string currentProgress = $"{Matches.Count} out of {MaxGamesToCollect} ({((decimal)Matches.Count / (decimal)MaxGamesToCollect) * 100}%)";
+                string currentProgress = GetProgressMessage();
                 apiVars.CurrentProgress = currentProgress;
                 await UpdateLocalVarsFile(apiVars);
             }

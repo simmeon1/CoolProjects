@@ -43,7 +43,7 @@ namespace LeagueAPI_Classes
 
         protected override Task UpdateRequestAuthorizationToSucceed(HttpRequestMessage request)
         {
-            throw new Exception("API key is invalid.");
+            throw new APIKeyIsInvalidException("API key is invalid.");
         }
     }
 }
