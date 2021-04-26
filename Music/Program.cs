@@ -16,11 +16,11 @@ namespace Music
         public static async Task Main(string[] args)
         {
 
-            //ChromeWorker_Music chrome = new ChromeWorker_Music();
-            //Dictionary<int, List<WikipediaSong>> ukSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_UK();
-            //List<WikipediaSong> list = ukSongs.First().Value;
-            //await chrome.UpdateSongsWithYouTubeData(list);
-            //var x = 1;
+            ChromeWorker_Music chrome = new ChromeWorker_Music();
+            Dictionary<int, List<WikipediaSong>> ukSongs = chrome.GoThroughWikipediaLinksAndCollectSongs_UK();
+            List<WikipediaSong> list = ukSongs.First().Value;
+            await chrome.UpdateSongsWithYouTubeData(list);
+            var x = 1;
 
             //ListHelper.AddListTypePropertyToList(ukSongs, ListTypes.TopTenUKSingles).ToJson().WriteJsonFile(ListTypes.TopTenUKSingles);
 
@@ -55,10 +55,10 @@ namespace Music
 
             //List<WikipediaSong> fullList = JsonHelper.ReadJsonFile_List(ListTypes.TopTenUKandUSSingles);
 
-            SpotifyAccountCredentials credentials = File.ReadAllText("credentials.json").ToObject<SpotifyAccountCredentials>();
+            //SpotifyAccountCredentials credentials = File.ReadAllText("credentials.json").ToObject<SpotifyAccountCredentials>();
 
-            SpotifyAPIClient spotifyAPIClient = new SpotifyAPIClient(credentials);
-            string responseContent = await spotifyAPIClient.GetUserPlaylists();
+            //SpotifyAPIClient spotifyAPIClient = new SpotifyAPIClient(credentials);
+            //string responseContent = await spotifyAPIClient.GetUserPlaylists();
             //for (int i = 0; i < fullList.Count; i++)
             //{
             //    WikipediaSong song = fullList[i];
