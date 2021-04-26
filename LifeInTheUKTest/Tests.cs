@@ -7,6 +7,7 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -181,6 +182,32 @@ namespace LifeInTheUKTest
             TestDoer testDoer = new(Worker);
             List<Answer> results = await testDoer.DoAllTheWorkForXTests(45);
             string json = results.ToJson();
+        }
+
+        [TestMethod]
+        public void CleanUpQuestions()
+        {
+            List<Answer> QsAndAs = File.ReadAllText("lifeInTheUKQuestions.json").ToObject<List<Answer>>();
+            List<string> answersPrintable = new();
+            foreach (Answer QandA in QsAndAs)
+            {
+                string questionClean = QandA.Question.Replace("\r", "").Replace("\n", "").Trim();
+
+                string answerOneLine = "";
+                foreach (string answer in QandA.Answers)
+                {
+                    if (answerOneLine.Length > 0) answerOneLine += "; ";
+                    answerOneLine += answer;
+                }
+
+                answersPrintable.Add($"{QandA.TestId}	{questionClean}	{answerOneLine}");
+            }
+
+            string finalString = "";
+            foreach (string answer in answersPrintable)
+            {
+                finalString += $"{answer}{Environment.NewLine}";
+            }
         }
     }
 }
