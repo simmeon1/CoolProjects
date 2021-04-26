@@ -60,7 +60,7 @@ namespace ClassLibrary.SeleniumClasses
 
         public object ClickElement(IWebElement element)
         {
-            return ExecuteJavaScript($"{WebDriver_Extended.arguments0}.click()", element);
+            return ExecuteJavaScript($"{arguments0}.click()", element);
         }
     }
 }

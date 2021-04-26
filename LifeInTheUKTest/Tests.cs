@@ -20,12 +20,14 @@ namespace LifeInTheUKTest
 
         public WebDriver_Extended Driver { get; set; }
         public LifeInTheUKTestsCoUk_Worker Worker { get; set; }
+        public ButtonWorker ButtonWorker { get; set; }
 
         [TestInitialize]
         public void Start()
         {
             Driver = new(new ChromeDriver());
-            Worker = new(Driver);
+            ButtonWorker = new ButtonWorker(Driver);
+            Worker = new(ButtonWorker);
         }
 
         [TestCleanup]
@@ -42,10 +44,14 @@ namespace LifeInTheUKTest
 
 
         [TestMethod]
-        public void GetStartQuizButtonFromMainPage()
+        public async Task GetStartQuizButtonFromMainPageAsync()
         {
             Driver.GoToUrl(defaultUrl);
-            IWebElement startQuizButton = Worker.GetStartQuizButton();
+
+            ButtonWorker.RefreshVisibleButtons();
+            await Task.Delay(1000);
+
+            IWebElement startQuizButton = ButtonWorker.GetStartQuizButton();
             Assert.IsTrue(startQuizButton != null);
         }
 
@@ -53,37 +59,30 @@ namespace LifeInTheUKTest
         public async Task GetThe94Options()
         {
             Driver.GoToUrl(defaultUrl);
-            await Await1000();
+            await Task.Delay(1000);
 
-            IWebElement element = Worker.GetStartQuizButton();
+            ButtonWorker.RefreshVisibleButtons();
+            await Task.Delay(1000);
+
+            IWebElement element = ButtonWorker.GetStartQuizButton();
             Driver.ClickElement(element);
-            await Await1000();
+            await Task.Delay(1000);
 
             List<IWebElement> all94Options = Worker.GetAll94Options();
             Assert.IsTrue(all94Options.Count == 94);
-        }
-
-        private Task Await1000()
-        {
-            return Worker.Await1000();
-        }
-
-        private Task Await100()
-        {
-            return Worker.Await100();
         }
 
         [TestMethod]
         public async Task GetTestId()
         {
             Driver.GoToUrl(defaultUrl);
-            await Await1000();
+            await Task.Delay(1000);
 
             int testId = Worker.GetTestId();
             Assert.IsTrue(testId == 1);
 
             Driver.GoToUrl($"{defaultUrl}?test=11");
-            await Await1000();
+            await Task.Delay(1000);
 
             testId = Worker.GetTestId();
             Assert.IsTrue(testId == 11);
@@ -93,11 +92,14 @@ namespace LifeInTheUKTest
         public async Task GetThe24Questions()
         {
             Driver.GoToUrl(defaultUrl);
-            await Await1000();
+            await Task.Delay(1000);
 
-            IWebElement element = Worker.GetStartQuizButton();
+            ButtonWorker.RefreshVisibleButtons();
+            await Task.Delay(1000);
+
+            IWebElement element = ButtonWorker.GetStartQuizButton();
             Driver.ClickElement(element);
-            await Await1000();
+            await Task.Delay(1000);
 
             List<IWebElement> all24Questions = Worker.GetAllQuestions();
             Assert.IsTrue(all24Questions.Count == 24);
@@ -138,9 +140,12 @@ namespace LifeInTheUKTest
             List<IWebElement> the4Options = Worker.GetOptionsForQuestion(question: all24Questions[0]);
             IWebElement firstOption = the4Options[0];
             Driver.ClickElement(firstOption);
-            await Await1000();
+            await Task.Delay(1000);
 
-            IWebElement nextButton = Worker.GetNextQuestionButton();
+            ButtonWorker.RefreshVisibleButtons();
+            await Task.Delay(1000);
+
+            IWebElement nextButton = ButtonWorker.GetNextQuestionButton();
             Assert.IsTrue(nextButton != null);
             Driver.ClickElement(nextButton);
         }
@@ -162,13 +167,14 @@ namespace LifeInTheUKTest
             List<IWebElement> the4Options = Worker.GetOptionsForQuestion(question: all24Questions[0]);
             IWebElement firstOption = the4Options[0];
             Driver.ClickElement(firstOption);
-            await Await1000();
+            await Task.Delay(1000);
 
             List<string> answers = Worker.GetCorrectAnswersForCurrentQuestion();
             Assert.IsTrue(answers.Count > 0);
             Assert.IsTrue(answers[0].Length > 0);
         }
 
+        [Ignore]
         [TestMethod]
         public async Task DoAllTheWorkFor45Tests()
         {

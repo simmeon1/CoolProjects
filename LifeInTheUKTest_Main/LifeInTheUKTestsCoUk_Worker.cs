@@ -14,55 +14,11 @@ namespace LifeInTheUKTest
         public const string defaultUrl = "https://lifeintheuktests.co.uk/life-in-the-uk-test/";
         public const string arguments0 = WebDriver_Extended.arguments0;
         public WebDriver_Extended Driver { get; set; }
-        public LifeInTheUKTestsCoUk_Worker(WebDriver_Extended driver)
+        public ButtonWorker ButtonWorker { get; set; }
+        public LifeInTheUKTestsCoUk_Worker(ButtonWorker buttonWorker)
         {
-            Driver = driver;
-        }
-
-        public IWebElement GetStartQuizButton()
-        {
-            List<IWebElement> buttons = GetAllVisibleButtons();
-            return GetButtonContainingExactText(buttons, "start test");
-        }
-
-        public IWebElement GetViewAnswersButton()
-        {
-            List<IWebElement> buttons = GetAllVisibleButtons();
-            return GetButtonContainingExactText(buttons, "View my answers");
-        }
-
-        private IWebElement GetButtonContainingExactText(List<IWebElement> buttons, string text)
-        {
-            return buttons.FirstOrDefault(b => Driver.ExecuteJavaScriptToGetObjects<string>($"return {arguments0}.value", b).ToLower().Equals(text.ToLower()));
-        }
-
-        private List<IWebElement> GetAllVisibleButtons()
-        {
-            List<IWebElement> allButtons = Driver.ExecuteJavaScriptToGetElements("return document.querySelectorAll('input')");
-            List<IWebElement> visibleButtons = new();
-            foreach (IWebElement button in allButtons)
-            {
-                if (!Driver.ExecuteJavaScriptToGetObjects<bool>($"return {arguments0}.offsetParent === null", button)) visibleButtons.Add(button);
-            }
-            return visibleButtons;
-        }
-
-        public IWebElement GetNextQuestionButton()
-        {
-            List<IWebElement> buttons = GetAllVisibleButtons();
-            return GetButtonContainingExactText(buttons, "next");
-        }
-        
-        public IWebElement GetCheckButton()
-        {
-            List<IWebElement> buttons = GetAllVisibleButtons();
-            return GetButtonContainingExactText(buttons, "check");
-        }
-        
-        public IWebElement GetFinishTestButton()
-        {
-            List<IWebElement> buttons = GetAllVisibleButtons();
-            return GetButtonContainingExactText(buttons, "finish test");
+            Driver = buttonWorker.Driver;
+            ButtonWorker = buttonWorker;
         }
 
         public List<IWebElement> GetAll94Options()
@@ -88,23 +44,17 @@ namespace LifeInTheUKTest
             if (testId > 1) url += $"?test={testId}";
 
             Driver.GoToUrl(url);
-            await Await1000();
+            await Task.Delay(1000);
 
-            IWebElement element = GetStartQuizButton();
+            ButtonWorker.RefreshVisibleButtons();
+            await Task.Delay(1000);
+
+            IWebElement element = ButtonWorker.GetStartQuizButton();
+            await Task.Delay(1000);
             if (element == null) return;
 
             Driver.ClickElement(element);
-            await Await1000();
-        }
-
-        public async Task Await1000()
-        {
             await Task.Delay(1000);
-        }
-        
-        public async Task Await100()
-        {
-            await Task.Delay(100);
         }
 
         public List<IWebElement> GetOptionsForQuestion(IWebElement question)

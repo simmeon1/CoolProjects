@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary", "ClassLibrar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodingChallenges", "CodingChallenges\CodingChallenges.csproj", "{5F0FACD5-705A-47F4-837B-BA432452A049}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifeInTheUKTest", "LifeInTheUKTest\LifeInTheUKTest.csproj", "{F51AE939-54E6-4602-8DBA-8F77D51097AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LifeInTheUKTest", "LifeInTheUKTest\LifeInTheUKTest.csproj", "{F51AE939-54E6-4602-8DBA-8F77D51097AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifeInTheUKTest_Main", "LifeInTheUKTest_Main\LifeInTheUKTest_Main.csproj", "{53FC78A7-AB26-4102-BBB6-852BF3FBAFDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{F51AE939-54E6-4602-8DBA-8F77D51097AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F51AE939-54E6-4602-8DBA-8F77D51097AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F51AE939-54E6-4602-8DBA-8F77D51097AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53FC78A7-AB26-4102-BBB6-852BF3FBAFDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53FC78A7-AB26-4102-BBB6-852BF3FBAFDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53FC78A7-AB26-4102-BBB6-852BF3FBAFDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53FC78A7-AB26-4102-BBB6-852BF3FBAFDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
