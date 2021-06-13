@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClassLibrary;
+using System.Text.RegularExpressions;
 
 namespace LeagueAPI_Classes
 {
@@ -19,23 +20,30 @@ namespace LeagueAPI_Classes
         private HashSet<long> ScannedGameIds { get; set; }
         private Queue<string> AccountsToScan { get; set; }
         private HashSet<string> AccountsAddedForScanning { get; set; }
-        private string LatestGameVersion { get; set; }
-        private int? LastQueue { get; set; }
+        private string GameVersionToLookFor { get; set; }
+        private int QueueToLookFor { get; set; }
         private int MaxGamesToCollect { get; set; }
         private long AccountsScanned { get; set; }
 
         private const string varsFile = LeagueAPI_Variables.varsFile;
 
-        public LeagueAPI_DataCollector(string apiKey, LeagueAPISettingsFile leagueAPISettingsFile)
+        public LeagueAPI_DataCollector(string apiKey, LeagueAPISettingsFile leagueAPISettingsFile, string gameVersion, int queue)
         {
-            LeagueAPISettingsFile = leagueAPISettingsFile;
             LeagueAPIClient = new LeagueAPIClient(apiKey);
+            SetUpNonAPIClientSettings(leagueAPISettingsFile, gameVersion, queue);
         }
 
-        public LeagueAPI_DataCollector(LeagueAPIClient leagueAPIClient, LeagueAPISettingsFile leagueAPISettingsFile)
+        public LeagueAPI_DataCollector(LeagueAPIClient leagueAPIClient, LeagueAPISettingsFile leagueAPISettingsFile, string gameVersionToLookFor, int queueToLookFor)
+        {
+            LeagueAPIClient = leagueAPIClient;
+            SetUpNonAPIClientSettings(leagueAPISettingsFile, gameVersionToLookFor, queueToLookFor);
+        }
+        private void SetUpNonAPIClientSettings(LeagueAPISettingsFile leagueAPISettingsFile, string gameVersionToLookFor, int queueToLookFor)
         {
             LeagueAPISettingsFile = leagueAPISettingsFile;
-            LeagueAPIClient = leagueAPIClient;
+            if (!Regex.IsMatch(gameVersionToLookFor, @"^\d+\.\d+$")) throw new ArgumentException(@"Game version argument must be like '^\d+\.\d+$'");
+            GameVersionToLookFor = gameVersionToLookFor;
+            QueueToLookFor = queueToLookFor;
         }
 
         public async Task<string> CollectMatchesData(int maxCountOfGames)
@@ -131,13 +139,13 @@ namespace LeagueAPI_Classes
             HashSet<ParticipantIdentityDto> participantIdentities = new HashSet<ParticipantIdentityDto>();
             foreach (MatchReferenceDto matchRef in matchlist.matches)
             {
-                if (LastQueue == null) LastQueue = matchRef.queue;
-                if (matchRef.queue != LastQueue || ScannedGameIds.Contains(matchRef.gameId)) continue;
+                if (matchRef.queue != QueueToLookFor || ScannedGameIds.Contains(matchRef.gameId)) continue;
                 MatchDto match = await LeagueAPIClient.GetMatch(matchRef.gameId);
                 ScannedGameIds.Add(matchRef.gameId);
                 if (match == null || match.gameId == 0) continue;
-                if (string.IsNullOrEmpty(LatestGameVersion)) LatestGameVersion = match.gameVersion;
-                if (!match.gameVersion.Contains(LatestGameVersion)) break;
+                int shouldScanContinueDependingOnGameVersion = ShouldScanContinueDependingOnGameVersion(match.gameVersion);
+                if (shouldScanContinueDependingOnGameVersion == 2) break;
+                if (shouldScanContinueDependingOnGameVersion == 1) continue;
                 Matches.Add(match);
                 Debug.WriteLine(Matches.Count);
                 foreach (ParticipantIdentityDto identity in match.participantIdentities) participantIdentities.Add(identity);
@@ -161,6 +169,41 @@ namespace LeagueAPI_Classes
             }
 
             return await ReadVarsFileAndDetermineIfDataCollectionShouldStop();
+        }
+
+        private int ShouldScanContinueDependingOnGameVersion(string gameVersionOfScannedGame)
+        {
+            //0 - carry on
+            //1 - continue
+            //2 - break
+
+            int firstGroupIntOfScannedGame = 0;
+            int secondGroupIntOfScannedGame = 0;
+            GetVersionNumbersFromText(ref firstGroupIntOfScannedGame, ref secondGroupIntOfScannedGame, gameVersionOfScannedGame);
+            
+            int firstGroupIntOfRequiredVersion = 0;
+            int secondGroupIntOfRequiredVersion = 0;
+            GetVersionNumbersFromText(ref firstGroupIntOfRequiredVersion, ref secondGroupIntOfRequiredVersion, GameVersionToLookFor);
+
+            if (firstGroupIntOfScannedGame < firstGroupIntOfRequiredVersion) return 2;
+            else if (firstGroupIntOfScannedGame > firstGroupIntOfRequiredVersion) return 1;
+            else if (secondGroupIntOfScannedGame < secondGroupIntOfRequiredVersion) return 2;
+            else if (secondGroupIntOfScannedGame > secondGroupIntOfRequiredVersion) return 1;
+            return 0;
+        }
+
+        private static void GetVersionNumbersFromText(ref int firstGroupInt, ref int secondGroupInt, string gameVersionOfScannedGame)
+        {
+            Match match = Regex.Match(gameVersionOfScannedGame, @"^(\d+)\.(\d+)");
+            firstGroupInt = GetNumberFromGameVersionString(match, 1);
+            secondGroupInt = GetNumberFromGameVersionString(match, 2);
+        }
+
+        private static int GetNumberFromGameVersionString(Match match, int groupIndex)
+        {
+            string groupStr = match.Groups[groupIndex].Value;
+            string groupStrClean = Regex.Replace(groupStr, "^0+", "");
+            return int.Parse(groupStrClean);
         }
 
         /// <summary>

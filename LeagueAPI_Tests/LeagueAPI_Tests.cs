@@ -28,7 +28,7 @@ namespace LeagueAPI_Tests
         [TestMethod]
         public async Task CollectMatchesData()
         {
-            LeagueAPI_DataCollector dataCollector = new(leagueAPIClient, leagueAPISettingsFile);
+            LeagueAPI_DataCollector dataCollector = new(leagueAPIClient, leagueAPISettingsFile, "11.12", 450);
             await dataCollector.CollectMatchesData(maxCountOfGames: 1);
         }
 
