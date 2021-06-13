@@ -7,8 +7,10 @@ namespace LeagueAPI_Classes
 {
     public class StatsTableCreator_Runes : StatsTableCreator
     {
-        public StatsTableCreator_Runes()
+        private RuneCollection RuneCollection { get; set; }
+        public StatsTableCreator_Runes(LeagueAPISettingsFile leagueAPISettingsFile): base(leagueAPISettingsFile)
         {
+            RuneCollection = leagueAPISettingsFile.GetRuneCollection();
             AddDataToDictionaryAction = AddRuneDataToDictionary;
             InsertExtraColumnsInDataTableAction = InsertExtraRuneColumnsInDataTable;
             GetEntityFullNameFromKey = GetRuneFullNameFromKey;
@@ -16,7 +18,7 @@ namespace LeagueAPI_Classes
 
         private string GetRuneFullNameFromKey(int runeId)
         {
-            foreach (RuneCollection_Tree tree in Globals.RuneCollection.trees)
+            foreach (RuneCollection_Tree tree in RuneCollection.trees)
             {
                 foreach (Tree_Slot slot in tree.slots)
                 {
@@ -46,9 +48,9 @@ namespace LeagueAPI_Classes
             }
         }
 
-        private static void AddExtraRuneDataToEntry(int runeId, List<object> entry)
+        private void AddExtraRuneDataToEntry(int runeId, List<object> entry)
         {
-            foreach (RuneCollection_Tree tree in Globals.RuneCollection.trees)
+            foreach (RuneCollection_Tree tree in RuneCollection.trees)
             {
                 for (int i = 0; i < tree.slots.Count; i++)
                 {

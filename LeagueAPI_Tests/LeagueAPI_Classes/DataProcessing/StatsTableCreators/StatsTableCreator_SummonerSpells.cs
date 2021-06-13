@@ -7,8 +7,10 @@ namespace LeagueAPI_Classes
 {
     public class StatsTableCreator_SummonerSpells : StatsTableCreator
     {
-        public StatsTableCreator_SummonerSpells()
+        private SummonerSpellCollection SummonerSpellCollection { get; set; }
+        public StatsTableCreator_SummonerSpells(LeagueAPISettingsFile leagueAPISettingsFile): base(leagueAPISettingsFile)
         {
+            SummonerSpellCollection = leagueAPISettingsFile.GetSummonerSpellCollection();
             AddDataToDictionaryAction = AddSpellDataToDictionary;
             InsertExtraColumnsInDataTableAction = InsertExtraSpellColumnsInDataTable;
             GetEntityFullNameFromKey = GetSpellFullNameFromKey;
@@ -16,7 +18,7 @@ namespace LeagueAPI_Classes
 
         private string GetSpellFullNameFromKey(int spellId)
         {
-            foreach (KeyValuePair<string, SummonerSpellCollection_Spell> spell in Globals.SummonerSpellCollection.data)
+            foreach (KeyValuePair<string, SummonerSpellCollection_Spell> spell in SummonerSpellCollection.data)
             {
                 if (int.Parse(spell.Value.key) == spellId) return spell.Value.name;
             }

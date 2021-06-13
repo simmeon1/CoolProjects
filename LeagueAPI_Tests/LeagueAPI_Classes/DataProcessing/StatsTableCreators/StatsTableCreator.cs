@@ -7,6 +7,12 @@ namespace LeagueAPI_Classes
 {
     public abstract class StatsTableCreator
     {
+        protected LeagueAPISettingsFile LeagueAPISettingsFile { get; set; }
+        protected StatsTableCreator(LeagueAPISettingsFile leagueAPISettingsFile)
+        {
+            LeagueAPISettingsFile = leagueAPISettingsFile;
+        }
+
         protected Action<IDictionary<int, object[]>, Champion> AddDataToDictionaryAction { get; set; }
         protected Action<DataTable> InsertExtraColumnsInDataTableAction { get; set; }
         protected Func<int, string> GetEntityFullNameFromKey { get; set; }

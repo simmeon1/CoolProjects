@@ -1,24 +1,22 @@
 ﻿using ClassLibrary;
 using OfficeOpenXml;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using ClassLibrary;
 
 namespace LeagueAPI_Classes
 {
     public class StatsTableToExcelPrinter : ExcelPrinterBase
     {
-        public bool PrintStatsTables(IEnumerable<DataTable> statTables, string descriptor = null)
+        public bool PrintStatsTables(IEnumerable<DataTable> statTables, string resultsPath, string descriptor = null)
         {
+            if (!Directory.Exists(resultsPath)) Directory.CreateDirectory(resultsPath);
             descriptor = descriptor == null ? "All" : descriptor;
             using (Package = new ExcelPackage())
             {
                 foreach (DataTable statTable in statTables) AddTableToWorksheet(statTable);
-                Package.SaveAs(new FileInfo($@"{Globals.ResultsPath}Stats{descriptor}_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.xlsx"));
+                Package.SaveAs(new FileInfo(Path.Combine(resultsPath, $"Stats{descriptor}_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.xlsx")));
             }
             return true;
         }

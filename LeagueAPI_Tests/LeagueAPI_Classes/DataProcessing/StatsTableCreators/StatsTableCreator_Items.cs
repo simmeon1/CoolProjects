@@ -7,8 +7,10 @@ namespace LeagueAPI_Classes
 {
     public class StatsTableCreator_Items : StatsTableCreator
     {
-        public StatsTableCreator_Items()
+        private ItemCollection ItemCollection { get; set; }
+        public StatsTableCreator_Items(LeagueAPISettingsFile leagueAPISettings): base(leagueAPISettings)
         {
+            ItemCollection = leagueAPISettings.GetItemCollection();
             AddDataToDictionaryAction = AddItemDataToDictionary;
             InsertExtraColumnsInDataTableAction = InsertExtraItemColumnsInDataTable;
             GetEntityFullNameFromKey = GetItemFullNameFromKey;
@@ -16,8 +18,8 @@ namespace LeagueAPI_Classes
 
         private string GetItemFullNameFromKey(int key)
         {
-            bool itemHasData = Globals.ItemCollection.data.ContainsKey(key);
-            return itemHasData ? Globals.ItemCollection.data[key].name : key.ToString();
+            bool itemHasData = ItemCollection.data.ContainsKey(key);
+            return itemHasData ? ItemCollection.data[key].name : key.ToString();
         }
 
         private void AddItemDataToDictionary(IDictionary<int, object[]> dict, Champion champ)
@@ -41,13 +43,13 @@ namespace LeagueAPI_Classes
             }
         }
 
-        private static void AddExtraItemDataToEntry(int item, List<object> entry)
+        private void AddExtraItemDataToEntry(int item, List<object> entry)
         {
-            bool itemHasData = Globals.ItemCollection.data.ContainsKey(item);
-            entry.Add(itemHasData ? Globals.ItemCollection.data[item].gold.total : 0);
-            entry.Add(itemHasData ? Globals.ItemCollection.data[item].gold.total > 2000 : false);
-            entry.Add(itemHasData ? string.Join(", ", Globals.ItemCollection.data[item].tags) : "");
-            entry.Add(itemHasData ? string.Join(", ", Globals.ItemCollection.data[item].description) : "");
+            bool itemHasData = ItemCollection.data.ContainsKey(item);
+            entry.Add(itemHasData ? ItemCollection.data[item].gold.total : 0);
+            entry.Add(itemHasData ? ItemCollection.data[item].gold.total > 2000 : false);
+            entry.Add(itemHasData ? string.Join(", ", ItemCollection.data[item].tags) : "");
+            entry.Add(itemHasData ? string.Join(", ", ItemCollection.data[item].description) : "");
             entry.Add(item);
         }
 

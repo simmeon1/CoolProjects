@@ -7,6 +7,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using ClassLibrary;
 using System.Threading.Tasks;
 
 namespace LeagueAPI_Tests
@@ -14,19 +15,21 @@ namespace LeagueAPI_Tests
     [TestClass]
     public class LeagueAPI_Tests
     {
-        LeagueAPIClient leagueAPIClient;
+        private LeagueAPISettingsFile leagueAPISettingsFile;
+        private LeagueAPIClient leagueAPIClient;
 
         [TestInitialize]
         public void Initialize()
         {
-            leagueAPIClient = new LeagueAPIClient("RGAPI-2701df9e-0a9d-4c47-bc92-8d2c48cf8939");
+            leagueAPISettingsFile = File.ReadAllText(Globals.SettingsFileName).ToObject<LeagueAPISettingsFile>();
+            leagueAPIClient = new LeagueAPIClient("RGAPI-f5777167-aea2-4c20-aa14-ee4db0b8ec06");
         }
 
         [TestMethod]
         public async Task CollectMatchesData()
         {
-            LeagueAPI_DataCollector dataCollector = new LeagueAPI_DataCollector(leagueAPIClient);
-            await dataCollector.CollectMatchesData(maxCountOfGames: 50000);
+            LeagueAPI_DataCollector dataCollector = new(leagueAPIClient, leagueAPISettingsFile);
+            await dataCollector.CollectMatchesData(maxCountOfGames: 1);
         }
 
         //[TestMethod]

@@ -7,8 +7,10 @@ namespace LeagueAPI_Classes
 {
     public class StatsTableCreator_Champions : StatsTableCreator
     {
-        public StatsTableCreator_Champions()
+        private ChampionCollection ChampionCollection { get; set; }
+        public StatsTableCreator_Champions(LeagueAPISettingsFile leagueAPISettingsFile) : base(leagueAPISettingsFile)
         {
+            ChampionCollection = leagueAPISettingsFile.GetChampionCollection();
             AddDataToDictionaryAction = AddChampionDataToDictionary;
             InsertExtraColumnsInDataTableAction = InsertExtraChampionColumnsInDataTable;
             GetEntityFullNameFromKey = GetChampionFullNameFromKey;
@@ -16,7 +18,7 @@ namespace LeagueAPI_Classes
 
         private string GetChampionFullNameFromKey(int championId)
         {
-            foreach (KeyValuePair<string, ChampionCollection_Champion> champ in Globals.ChampionCollection.data)
+            foreach (KeyValuePair<string, ChampionCollection_Champion> champ in ChampionCollection.data)
             {
                 if (int.Parse(champ.Value.key) == championId) return champ.Value.name;
             }
@@ -43,9 +45,9 @@ namespace LeagueAPI_Classes
             }
         }
 
-        private static void AddExtraChampionDataToEntry(int championId, List<object> entry)
+        private void AddExtraChampionDataToEntry(int championId, List<object> entry)
         {
-            foreach (KeyValuePair<string, ChampionCollection_Champion> champ in Globals.ChampionCollection.data)
+            foreach (KeyValuePair<string, ChampionCollection_Champion> champ in ChampionCollection.data)
             {
                 if (int.Parse(champ.Value.key) == championId)
                 {

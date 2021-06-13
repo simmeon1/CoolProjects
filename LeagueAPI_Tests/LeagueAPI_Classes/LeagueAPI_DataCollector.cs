@@ -12,8 +12,8 @@ namespace LeagueAPI_Classes
 {
     public class LeagueAPI_DataCollector
     {
-        private string PersonalAccountId = Globals.PersonalAccountId;
 
+        private LeagueAPISettingsFile LeagueAPISettingsFile { get; set; }
         public HashSet<MatchDto> Matches { get; set; }
         private LeagueAPIClient LeagueAPIClient { get; set; }
         private HashSet<long> ScannedGameIds { get; set; }
@@ -26,14 +26,16 @@ namespace LeagueAPI_Classes
 
         private const string varsFile = LeagueAPI_Variables.varsFile;
 
-        public LeagueAPI_DataCollector(string apiKey)
+        public LeagueAPI_DataCollector(string apiKey, LeagueAPISettingsFile leagueAPISettingsFile)
         {
-            this.LeagueAPIClient = new LeagueAPIClient(apiKey);
+            LeagueAPISettingsFile = leagueAPISettingsFile;
+            LeagueAPIClient = new LeagueAPIClient(apiKey);
         }
 
-        public LeagueAPI_DataCollector(LeagueAPIClient leagueAPIClient)
+        public LeagueAPI_DataCollector(LeagueAPIClient leagueAPIClient, LeagueAPISettingsFile leagueAPISettingsFile)
         {
-            this.LeagueAPIClient = leagueAPIClient;
+            LeagueAPISettingsFile = leagueAPISettingsFile;
+            LeagueAPIClient = leagueAPIClient;
         }
 
         public async Task<string> CollectMatchesData(int maxCountOfGames)
@@ -44,8 +46,9 @@ namespace LeagueAPI_Classes
             Matches = new HashSet<MatchDto>();
             ScannedGameIds = new HashSet<long>();
             AccountsToScan = new Queue<string>();
-            AccountsToScan.Enqueue(PersonalAccountId);
-            AccountsAddedForScanning = new HashSet<string>() { PersonalAccountId };
+            string personalAccountId = LeagueAPISettingsFile.PersonalAccountId;
+            AccountsToScan.Enqueue(personalAccountId);
+            AccountsAddedForScanning = new HashSet<string>() { personalAccountId };
             MaxGamesToCollect = maxCountOfGames;
             AccountsScanned = 0;
 
@@ -177,30 +180,32 @@ namespace LeagueAPI_Classes
             return varsFile.StopCollectingData;
         }
 
-        private static void WriteFiles(HashSet<MatchDto> matches)
+        private void WriteFiles(HashSet<MatchDto> matches)
         {
             List<Champion> champs = new List<Champion>();
             foreach (MatchDto match in matches) champs.AddRange(match.GetChampionData());
+            if (!Directory.Exists(LeagueAPISettingsFile.APIResultsPath)) Directory.CreateDirectory(LeagueAPISettingsFile.APIResultsPath);
             WriteChampJsonFile(champs);
             WriteExcelFiles(champs);
             WriteItemSetJsonFile(champs);
         }
 
-        private static void WriteFiles(List<Champion> champs)
+        private void WriteFiles(List<Champion> champs)
         {
             WriteExcelFiles(champs);
             WriteItemSetJsonFile(champs);
         }
 
-        private static void WriteItemSetJsonFile(List<Champion> champs)
+        private void WriteItemSetJsonFile(List<Champion> champs)
         {
             // put champs file here
-            ItemSet set = new ItemSet();
-            set.title = $"ItemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}";
-            set.associatedMaps = new List<int>() { 11, 12 };
-            set.associatedChampions = new List<object>();
-
-            set.blocks = new List<ItemSet_Block>();
+            ItemSet set = new ItemSet
+            {
+                title = $"ItemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}",
+                associatedMaps = new List<int>() { 11, 12 },
+                associatedChampions = new List<object>(),
+                blocks = new List<ItemSet_Block>()
+            };
             ItemSet_Block mythics50PlusWR = new ItemSet_Block() { type = "Mythics 50+ WR", items = new List<Block_Item>() };
             set.blocks.Add(mythics50PlusWR);
             ItemSet_Block mythics50MinusWR = new ItemSet_Block() { type = "Mythics 50- WR", items = new List<Block_Item>() };
@@ -210,13 +215,17 @@ namespace LeagueAPI_Classes
             ItemSet_Block legendaries50MinusWR = new ItemSet_Block() { type = "Legendaries 50- WR", items = new List<Block_Item>() };
             set.blocks.Add(legendaries50MinusWR);
 
-            DataTable stats = champs.GetItemStatsFromChamps();
+            DataTable stats = GetItemStatsFromChamps(champs);
             List<ItemSet_ItemEntry> itemEntries = new List<ItemSet_ItemEntry>();
+
+            ItemCollection itemCollection = LeagueAPISettingsFile.GetItemCollection();
+
+
             for (int i = 0; i < stats.Rows.Count; i++)
             {
                 DataRow row = stats.Rows[i];
                 int id = (int)row[10];
-                if (!Globals.ItemCollection.data.ContainsKey(id)) continue;
+                if (!itemCollection.data.ContainsKey(id)) continue;
 
                 ItemSet_ItemEntry itemEntry = new ItemSet_ItemEntry() { id = id, name = (string)row[0], winRate = (double)row[5], moreThan2000G = (bool)row[7] };
                 if (!itemEntry.moreThan2000G) continue;
@@ -239,32 +248,52 @@ namespace LeagueAPI_Classes
                     else legendaries50MinusWR.items.Add(item);
                 }
             }
-            File.WriteAllText($"{Globals.ResultsPath}\\{$@"itemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.json"}", JsonConvert.SerializeObject(set, Formatting.None));
+            File.WriteAllText($"{LeagueAPISettingsFile.APIResultsPath}\\{$@"itemSet_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.json"}", JsonConvert.SerializeObject(set, Formatting.None));
         }
 
-        private static void WriteChampJsonFile(List<Champion> champs)
+        private void WriteChampJsonFile(List<Champion> champs)
         {
-            if (!Directory.Exists(Globals.ResultsPath)) Directory.CreateDirectory(Globals.ResultsPath);
-            string fullFileName = $"{Globals.ResultsPath}\\{$@"champs_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.txt"}";
+            string fullFileName = $"{LeagueAPISettingsFile.APIResultsPath}\\{$@"champs_{ExtensionsAndStaticFunctions.GetDateTimeNowString()}.txt"}";
             File.WriteAllText(fullFileName, JsonConvert.SerializeObject(champs, Formatting.None));
         }
 
-        private static void WriteExcelFiles(IEnumerable<Champion> champs)
+        private void WriteExcelFiles(IEnumerable<Champion> champs)
         {
             PrintChampDataToExcel(champs);
         }
 
-        private static void PrintChampDataToExcel(IEnumerable<Champion> champs)
+        private void PrintChampDataToExcel(IEnumerable<Champion> champs)
         {
-            StatsTableToExcelPrinter statsDataTableToExcelPrinterg = new StatsTableToExcelPrinter();
-            statsDataTableToExcelPrinterg.PrintStatsTables(new List<DataTable>() {
-                champs.GetChampionStatsFromChamps(),
-                champs.GetRuneStatsFromChamps(),
-                champs.GetItemStatsFromChamps(),
-                champs.GetSpellStatsFromChamps() });
+            StatsTableToExcelPrinter statsDataTableToExcelPrinter = new();
+            statsDataTableToExcelPrinter.PrintStatsTables(new List<DataTable>() {
+                GetChampionStatsFromChamps(champs),
+                GetRuneStatsFromChamps(champs),
+                GetItemStatsFromChamps(champs),
+                GetSpellStatsFromChamps(champs) },
+                LeagueAPISettingsFile.APIResultsPath);
         }
 
-        private static void GetExcelFilesFromChampsFile(string champsJsonFilePath)
+        public DataTable GetChampionStatsFromChamps(IEnumerable<Champion> champs)
+        {
+            return new StatsTableCreator_Champions(LeagueAPISettingsFile).GetStatsFromChamps(champs);
+        }
+
+        public DataTable GetItemStatsFromChamps(IEnumerable<Champion> champs)
+        {
+            return new StatsTableCreator_Items(LeagueAPISettingsFile).GetStatsFromChamps(champs);
+        }
+
+        public DataTable GetRuneStatsFromChamps(IEnumerable<Champion> champs)
+        {
+            return new StatsTableCreator_Runes(LeagueAPISettingsFile).GetStatsFromChamps(champs);
+        }
+
+        public DataTable GetSpellStatsFromChamps(IEnumerable<Champion> champs)
+        {
+            return new StatsTableCreator_SummonerSpells(LeagueAPISettingsFile).GetStatsFromChamps(champs);
+        }
+
+        private void GetExcelFilesFromChampsFile(string champsJsonFilePath)
         {
             PrintChampDataToExcel(File.ReadAllText(champsJsonFilePath).ToObject<List<Champion>>());
         }
